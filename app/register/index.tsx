@@ -1,6 +1,8 @@
 import ButtonMain from "@/components/loginRegister/buttonMain";
 import PageTitle from "@/components/loginRegister/pageTitle";
 import TextField from "@/components/loginRegister/textField";
+import { COLORS } from "@/constants/colors";
+import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -20,13 +22,14 @@ export default function Register() {
             <TextField placeholder="Password" value={password} onChangeText={input => setPassword(input)} />
             <TextField placeholder="Confirm Password" value={confirmPassword} onChangeText={input => setConfirmPassword(input)} />
 
-            <ButtonMain label="Next step" onPress={() => console.log('NEXT STEP!')} />
+            <ButtonMain label="Next step" onPress={() => router.push('/register/register_optional')} />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     mainContainer: {
+        backgroundColor: COLORS.background,
         height: '100%',
         flexDirection: 'column',
         justifyContent: 'center',

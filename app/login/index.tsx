@@ -7,6 +7,7 @@ import { Pressable, Text, View, StyleSheet, Switch } from "react-native";
 
 import { router } from "expo-router";
 import RememberMeField from "@/components/loginRegister/rememberMeField";
+import { COLORS } from "@/constants/colors";
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -50,7 +51,7 @@ export default function Login() {
             </Link>
 
 
-            <Pressable hitSlop={12} style={styles.pressableTextContainer} onPress={() => router.push('/login/register')}>
+            <Pressable hitSlop={12} style={styles.pressableTextContainer} onPress={() => router.push('/register')}>
                 <Text style={styles.pressableText}>Click here to register</Text>
             </Pressable>
 
@@ -62,6 +63,7 @@ export default function Login() {
 
 const styles = StyleSheet.create({
     mainContainer: {
+        backgroundColor: COLORS.background,
         height: '100%',
         flexDirection: 'column',
         justifyContent: 'center',
