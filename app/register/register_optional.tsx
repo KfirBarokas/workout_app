@@ -8,7 +8,7 @@ import { COLORS } from "@/constants/colors";
 import { COUNTRIES } from "@/constants/countries";
 import React, { useState } from "react";
 
-import { View, Text, StyleSheet, Button, Image } from "react-native";
+import { View, Text, StyleSheet, Button, Image, Alert } from "react-native";
 
 export default function RegisterOptional() {
     const [openCountryPicker, setOpenCountryPicker] = useState(false);
@@ -22,9 +22,23 @@ export default function RegisterOptional() {
     const [countries, setCountries] = useState(objectList);
 
     const [image, setImage] = useState<string | null>(null);
+    // const [status, requestPermission] = ImagePicker.useCameraPermissions();
+
+    async function requestPermission() {
+        // NOT WORKING! !!!!
+        console.log("Requesting permission")
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+            Alert.alert("Permission Denied", "We need camera roll permissions to continue!");
+            return false;
+        }
+        return true;
+    };
 
     async function pickImage() {
-        // No permissions request is necessary for launching the image library
+        const hasPermission = await requestPermission();
+        if (!hasPermission) return;
+
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images', 'videos'],
             allowsEditing: true,
