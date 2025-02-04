@@ -1,4 +1,4 @@
-package com.anonymous.workout
+package com.workout
 
 import android.app.Application
 import android.content.res.Configuration
