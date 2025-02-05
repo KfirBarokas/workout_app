@@ -9,6 +9,8 @@ import { router } from "expo-router";
 import RememberMeField from "@/components/loginRegister/rememberMeField";
 import { COLORS } from "@/constants/colors";
 
+import axios from 'axios'
+
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,6 +18,25 @@ export default function Login() {
     const [rememberMeIsEnabled, setRememberMeIsEnabled] = useState(false)
     function toggleSwitch() {
         setRememberMeIsEnabled((prevState: boolean) => !prevState)
+    }
+
+    async function LoginUser() {
+        // If empty
+        // if (!email && !password) { return; }
+        console.log("Requesting")
+
+        let response = await axios({
+            method: 'get',
+            url: 'http://192.168.219.213:3000/login',
+            data: {
+                email: email,
+                password: password
+            }
+        })
+
+        if (response) {
+            console.log(response.data);
+        }
     }
 
 
@@ -35,7 +56,7 @@ export default function Login() {
                 </Pressable>
             </Link>
 
-            <ButtonMain label='Login' onPress={() => console.log("LOGIN!")} />
+            <ButtonMain label='Login' onPress={LoginUser} />
 
             <Text style={{ marginTop: 20, fontSize: 15, color: 'white' }}>OR</Text>
 
