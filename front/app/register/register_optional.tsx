@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import PageTitle from "@/components/auth/pageTitle";
 import TextField from "@/components/common/textField";
-=======
-import PageTitle from "@/components/loginRegister/pageTitle";
-import TextField from "@/components/loginRegister/textField";
->>>>>>> 5f154c20595d803dbea0b977e34903920de3de0f
 
 import DropDownPicker from 'react-native-dropdown-picker';
 import * as ImagePicker from 'expo-image-picker';
