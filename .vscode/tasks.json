@@ -1,0 +1,51 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start React App",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "cd front && npx expo start"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Start Node Server",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "cd server && npx nodemon server.mjs"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Start Full Stack",
+            "dependsOn": [
+                "Start React App",
+                "Start Node Server"
+            ],
+            "runOptions": {
+                "runOn": "default"
+            }
+        }
+    ]
+}
