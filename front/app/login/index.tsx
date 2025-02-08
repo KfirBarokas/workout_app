@@ -3,24 +3,61 @@ import PageTitle from "@/components/auth/pageTitle";
 import TextField from "@/components/common/textField";
 import { Link } from "expo-router";
 import { useState } from "react";
-import { Pressable, Text, View, StyleSheet, Switch } from "react-native";
+import { Pressable, Text, View, StyleSheet, Switch, Modal } from "react-native";
 
 import { router } from "expo-router";
 import { COLORS } from "@/constants/colors";
-
+import { CREDENTIAL_TYPES } from "@/constants/auth"
 
 import ServerHttpRequest from '../../services/axios_request.mjs'
+import InvalidCredentialModal from "@/components/auth/invalidCredentialModal";
+
+function isValidEmail(input: string) {
+    return String(input)
+        .toLowerCase()
+        .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+}
+
+function GetCredentialType(credential: string) {
+    if (isValidEmail(credential)) {
+        return CREDENTIAL_TYPES.EMAIL;
+    }
+    if (isNaN(parseInt(credential))) {
+        return CREDENTIAL_TYPES.PHONE_NUMBER;
+    }
+
+    return CREDENTIAL_TYPES.INVALID;
+}
+
+
+
 export default function Login() {
-    const [email, setEmail] = useState('')
+    const [loginCredential, setLoginCredential] = useState('')
+
+    const [invalidCredentialModalVisible, setInvalidCredentialModalVisible] = useState(false)
+
+    function ValidateLoginCredential(credential: string) {
+        let credentialType = GetCredentialType(loginCredential);
+        if (credentialType === CREDENTIAL_TYPES.INVALID) {
+
+        }
+    }
+
+    function ShowInvalidCredentialModal() { setInvalidCredentialModalVisible(true); }
 
     async function LoginUser() {
+        setInvalidCredentialModalVisible(true)
 
-        if (!email) { return; }
+        if (!loginCredential) { return; }
 
         console.log("Requesting")
 
+        // Is phone number or email
+
         let loginData = {
-            email: email
+            email: loginCredential
         }
         let response = await ServerHttpRequest('get', '/login', loginData)
 
@@ -29,13 +66,16 @@ export default function Login() {
         }
     }
 
-
+    //TODO: Add missing credential type
     return (
         <View style={styles.mainContainer}>
 
+            <InvalidCredentialModal isVisible={invalidCredentialModalVisible} setIsVisible={setInvalidCredentialModalVisible} />
+
             <PageTitle title="Login" />
 
-            <TextField value={email} placeholder="Email" onChangeText={input => setEmail(input)} />
+            <TextField value={loginCredential} placeholder="Email/phone number" onChangeText={input => setLoginCredential(input)} />
+
 
             <Link href="/(tabs)" asChild>
                 <Pressable style={styles.pressableTextContainer}>
@@ -44,25 +84,6 @@ export default function Login() {
             </Link>
 
             <ButtonMain label='Login' onPress={LoginUser} />
-
-            <Text style={{ marginTop: 20, fontSize: 15, color: 'white' }}>OR</Text>
-
-            <Link href="/(tabs)" asChild>
-                <Pressable style={styles.googleLoginButton}>
-                    <Text>Login with Google</Text>
-                </Pressable>
-            </Link>
-            <Link href="/(tabs)" asChild>
-                <Pressable style={styles.googleLoginButton}>
-                    <Text>Login with Facebook</Text>
-                </Pressable>
-            </Link>
-
-
-            <Pressable hitSlop={12} style={styles.pressableTextContainer} onPress={() => router.push('/register')}>
-                <Text style={styles.pressableText}>Click here to register</Text>
-            </Pressable>
-
 
         </View >
     )
