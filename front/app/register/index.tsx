@@ -1,6 +1,6 @@
-import ButtonMain from "@/components/loginRegister/buttonMain";
-import PageTitle from "@/components/loginRegister/pageTitle";
-import TextField from "@/components/loginRegister/textField";
+import ButtonMain from "@/components/common/buttonMain";
+import PageTitle from "@/components/auth/pageTitle";
+import TextField from "@/components/common/textField";
 import { COLORS } from "@/constants/colors";
 import { router } from "expo-router";
 import { useState } from "react";

@@ -7,6 +7,7 @@
  - Start Full Stack (both)
  - אפשר לבחור גם להריץ בנפרד כל אחד
 
+## First time running dev
 1. Install dependencies
 
    ```bash
