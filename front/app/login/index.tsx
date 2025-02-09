@@ -3,7 +3,7 @@ import PageTitle from "@/components/auth/pageTitle";
 import TextField from "@/components/common/textField";
 import { Link } from "expo-router";
 import { useState } from "react";
-import { Pressable, Text, View, StyleSheet, Switch, Modal } from "react-native";
+import { Pressable, Text, View, StyleSheet, Switch, Modal, StatusBar } from "react-native";
 
 import { router } from "expo-router";
 import { COLORS } from "@/constants/colors";
@@ -11,6 +11,7 @@ import { CREDENTIAL_TYPES } from "@/constants/auth"
 
 import ServerHttpRequest from '../../services/axios_request.mjs'
 import InvalidCredentialModal from "@/components/auth/invalidCredentialModal";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 function isValidEmail(input: string) {
     return String(input)
@@ -34,9 +35,9 @@ function GetCredentialType(credential: string) {
 
 
 export default function Login() {
-    const [loginCredential, setLoginCredential] = useState('')
+    const [loginCredential, setLoginCredential] = useState('');
 
-    const [invalidCredentialModalVisible, setInvalidCredentialModalVisible] = useState(false)
+    const [invalidCredentialModalVisible, setInvalidCredentialModalVisible] = useState(false);
 
     function ValidateLoginCredential(credential: string) {
         let credentialType = GetCredentialType(loginCredential);
@@ -68,7 +69,9 @@ export default function Login() {
 
     //TODO: Add missing credential type
     return (
-        <View style={styles.mainContainer}>
+        <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
+            <StatusBar hidden />
+            {/* <View > */}
 
             <InvalidCredentialModal isVisible={invalidCredentialModalVisible} setIsVisible={setInvalidCredentialModalVisible} />
 
@@ -85,7 +88,7 @@ export default function Login() {
 
             <ButtonMain label='Login' onPress={LoginUser} />
 
-        </View >
+        </View>
     )
 }
 
@@ -93,7 +96,6 @@ export default function Login() {
 const styles = StyleSheet.create({
     mainContainer: {
         backgroundColor: COLORS.background,
-        height: '100%',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',

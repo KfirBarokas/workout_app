@@ -4,7 +4,7 @@ import TextField from "@/components/common/textField";
 import { COLORS } from "@/constants/colors";
 import { router } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StatusBar, StyleSheet, View } from "react-native";
 
 
 export default function Register() {
@@ -14,7 +14,9 @@ export default function Register() {
     const [confirmPassword, setConfirmPassword] = useState('')
 
     return (
-        <View style={styles.mainContainer}>
+        <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
+            <StatusBar hidden />
+
             <PageTitle title="Register" />
 
             <TextField placeholder="Email" value={email} onChangeText={input => setEmail(input)} />
@@ -30,7 +32,6 @@ export default function Register() {
 const styles = StyleSheet.create({
     mainContainer: {
         backgroundColor: COLORS.background,
-        height: '100%',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
