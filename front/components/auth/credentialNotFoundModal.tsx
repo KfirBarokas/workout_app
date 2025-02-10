@@ -12,7 +12,7 @@ interface InvalidCredentialModalProps {
     credentialType: any // TODO: NEEDS TO BE A TYPE
 }
 
-export default function InvalidCredentialModal({ isVisible, setIsVisible, enteredCredential, credentialType }: InvalidCredentialModalProps) {
+export default function CredentialNotFoundModal({ isVisible, setIsVisible, enteredCredential, credentialType }: InvalidCredentialModalProps) {
 
     function OnSignupPress() {
         router.push('/register');

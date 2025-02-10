@@ -4,14 +4,14 @@ import TextField from "@/components/common/textField";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View, StyleSheet, Switch, Modal, StatusBar } from "react-native";
-
 import { router } from "expo-router";
+
 import { COLORS } from "@/constants/colors";
-import { CREDENTIAL_TYPES } from "@/constants/auth"
+import { CREDENTIAL_TYPES, INVALID_CREDENTIAL_MESSAGES } from "@/constants/auth"
 
 import ServerHttpRequest from '../../services/axios_request.mjs'
-import InvalidCredentialModal from "@/components/auth/invalidCredentialModal";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import CredentialNotFoundModal from "@/components/auth/credentialNotFoundModal";
+import CredentialTextField from "@/components/auth/credentialTextField";
 
 function isValidEmail(input: string) {
     return String(input)
@@ -25,7 +25,7 @@ function GetCredentialType(credential: string) {
     if (isValidEmail(credential)) {
         return CREDENTIAL_TYPES.EMAIL;
     }
-    if (isNaN(parseInt(credential))) {
+    if (/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g.test(credential)) {
         return CREDENTIAL_TYPES.PHONE_NUMBER;
     }
 
@@ -33,29 +33,33 @@ function GetCredentialType(credential: string) {
 }
 
 
-
 export default function Login() {
     const [loginCredential, setLoginCredential] = useState('');
 
     const [invalidCredentialModalVisible, setInvalidCredentialModalVisible] = useState(false);
 
-    function ValidateLoginCredential(credential: string) {
-        let credentialType = GetCredentialType(loginCredential);
-        if (credentialType === CREDENTIAL_TYPES.INVALID) {
+    const [invalidCredentialMessage, setInvalidCredentialMessage] = useState(INVALID_CREDENTIAL_MESSAGES.noMessage)
 
+    function UpdateInvalidCredentialMessage(credential: string, type: number) {
+        if (!credential) {
+            console.log('empty')
+            setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.empty)
+        }
+
+        else if (type === CREDENTIAL_TYPES.INVALID) {
+            console.log('invalid')
+            setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.notPhoneOrEmail)
         }
     }
 
     function ShowInvalidCredentialModal() { setInvalidCredentialModalVisible(true); }
 
     async function LoginUser() {
-        setInvalidCredentialModalVisible(true)
+        let credentialType = GetCredentialType(loginCredential);
 
-        if (!loginCredential) { return; }
+        UpdateInvalidCredentialMessage(loginCredential, credentialType);
 
-        console.log("Requesting")
-
-        // Is phone number or email
+        if (credentialType == CREDENTIAL_TYPES.INVALID) { return; }
 
         let loginData = {
             email: loginCredential
@@ -64,21 +68,27 @@ export default function Login() {
 
         if (response) {
             console.log(response.data);
+            if (!response.data.exists) {
+                ShowInvalidCredentialModal()
+            }
         }
     }
 
-    //TODO: Add missing credential type
+    //TODO: Add missing show credential type
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
             <StatusBar hidden />
-            {/* <View > */}
 
-            <InvalidCredentialModal isVisible={invalidCredentialModalVisible} setIsVisible={setInvalidCredentialModalVisible} />
+            <CredentialNotFoundModal isVisible={invalidCredentialModalVisible} setIsVisible={setInvalidCredentialModalVisible} />
 
             <PageTitle title="Login" />
 
-            <TextField value={loginCredential} placeholder="Email/phone number" onChangeText={input => setLoginCredential(input)} />
-
+            <CredentialTextField
+                value={loginCredential}
+                placeholder="Email/phone number"
+                onChangeText={input => setLoginCredential(input)}
+                invalidCredentialMessage={invalidCredentialMessage}
+            />
 
             <Link href="/(tabs)" asChild>
                 <Pressable style={styles.pressableTextContainer}>

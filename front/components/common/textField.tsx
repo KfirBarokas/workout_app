@@ -3,11 +3,13 @@ import { StyleSheet, TextInput } from "react-native"
 interface TextFieldProps {
     value: string,
     onChangeText: (input: string) => void,
-    placeholder: string
+    placeholder: string,
 }
 
 export default function TextField({ value, onChangeText, placeholder }: TextFieldProps) {
-    return <TextInput style={styles.input} placeholder={placeholder} value={value} onChangeText={onChangeText} />
+    return (
+        <TextInput style={styles.input} placeholder={placeholder} value={value} onChangeText={onChangeText} />
+    )
 }
 
 const styles = StyleSheet.create({

@@ -3,3 +3,9 @@ export const CREDENTIAL_TYPES = {
     EMAIL: 1,
     PHONE_NUMBER: 2
 }
+
+export const INVALID_CREDENTIAL_MESSAGES = {
+    noMessage: '',
+    empty: 'Field cannot be empty',
+    notPhoneOrEmail: 'Must be phone number or email'
+}
