@@ -1,7 +1,8 @@
 export const CREDENTIAL_TYPES = {
-    INVALID: 0,
-    EMAIL: 1,
-    PHONE_NUMBER: 2
+    NONE: 0,
+    INVALID: 1,
+    EMAIL: 2,
+    PHONE_NUMBER: 3
 }
 
 export const INVALID_CREDENTIAL_MESSAGES = {

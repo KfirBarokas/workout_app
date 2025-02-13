@@ -5,17 +5,17 @@ import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
 import { CREDENTIAL_TYPES } from '@/constants/auth';
 import { router } from 'expo-router';
 
-interface InvalidCredentialModalProps {
+interface CredentialNotFoundModalProps {
     isVisible: boolean,
     setIsVisible: (isVisible: boolean) => void,
     enteredCredential: string,
-    credentialType: any // TODO: NEEDS TO BE A TYPE
+    credentialType: number
 }
 
-export default function CredentialNotFoundModal({ isVisible, setIsVisible, enteredCredential, credentialType }: InvalidCredentialModalProps) {
+export default function CredentialNotFoundModal({ isVisible, setIsVisible, enteredCredential, credentialType }: CredentialNotFoundModalProps) {
 
     function OnSignupPress() {
-        router.push('/register');
+        router.push('/otp');
         setIsVisible(!isVisible);
     }
 

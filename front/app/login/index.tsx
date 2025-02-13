@@ -36,33 +36,38 @@ function GetCredentialType(credential: string) {
 export default function Login() {
     const [loginCredential, setLoginCredential] = useState('');
 
+
     const [invalidCredentialModalVisible, setInvalidCredentialModalVisible] = useState(false);
+    function ShowInvalidCredentialModal() { setInvalidCredentialModalVisible(true); }
 
     const [invalidCredentialMessage, setInvalidCredentialMessage] = useState(INVALID_CREDENTIAL_MESSAGES.noMessage)
+    const [credentialNotFoundType, setCredentialNotFoundType] = useState(CREDENTIAL_TYPES.NONE)
+    const [enteredCredential, setEnteredCredential] = useState('')
 
-    function UpdateInvalidCredentialMessage(credential: string, type: number) {
+    function UpdateInvalidCredentialMessage(credential: string) {
         if (!credential) {
-            console.log('empty')
             setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.empty)
         }
-
-        else if (type === CREDENTIAL_TYPES.INVALID) {
-            console.log('invalid')
+        else {
             setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.notPhoneOrEmail)
         }
     }
 
-    function ShowInvalidCredentialModal() { setInvalidCredentialModalVisible(true); }
 
     async function LoginUser() {
+        router.push('/otp')
         let credentialType = GetCredentialType(loginCredential);
 
-        UpdateInvalidCredentialMessage(loginCredential, credentialType);
+        if (credentialType === CREDENTIAL_TYPES.INVALID) {
+            UpdateInvalidCredentialMessage(loginCredential);
+            return;
+        }
 
-        if (credentialType == CREDENTIAL_TYPES.INVALID) { return; }
+        setEnteredCredential(loginCredential);
+        setCredentialNotFoundType(credentialType);
 
         let loginData = {
-            email: loginCredential
+            credential: loginCredential
         }
         let response = await ServerHttpRequest('get', '/login', loginData)
 
@@ -74,12 +79,16 @@ export default function Login() {
         }
     }
 
-    //TODO: Add missing show credential type
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
             <StatusBar hidden />
 
-            <CredentialNotFoundModal isVisible={invalidCredentialModalVisible} setIsVisible={setInvalidCredentialModalVisible} />
+            <CredentialNotFoundModal
+                isVisible={invalidCredentialModalVisible}
+                setIsVisible={setInvalidCredentialModalVisible}
+                credentialType={credentialNotFoundType}
+                enteredCredential={enteredCredential}
+            />
 
             <PageTitle title="Login" />
 

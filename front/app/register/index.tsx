@@ -11,7 +11,6 @@ export default function Register() {
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
 
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
@@ -22,7 +21,6 @@ export default function Register() {
             <TextField placeholder="Email" value={email} onChangeText={input => setEmail(input)} />
             <TextField placeholder="Username" value={username} onChangeText={input => setUsername(input)} />
             <TextField placeholder="Password" value={password} onChangeText={input => setPassword(input)} />
-            <TextField placeholder="Confirm Password" value={confirmPassword} onChangeText={input => setConfirmPassword(input)} />
 
             <ButtonMain label="Next step" onPress={() => router.push('/register/register_optional')} />
         </View>

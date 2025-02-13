@@ -15,10 +15,10 @@ export default function ButtonMain({ label, onPress }: ButtonProps) {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: 'cyan',
+        backgroundColor: '#D27D2C',
         padding: 15,
         borderRadius: 30,
-        width: 130,
+        width: 300,
         alignItems: 'center',
         marginTop: 30
     },

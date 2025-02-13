@@ -12,7 +12,7 @@ export default function PageTitle({ title }: PageTitleProps) {
 
 const styles = StyleSheet.create({
     title: {
-        color: 'white',
+        color: 'black',
         fontSize: 45
     },
 })
