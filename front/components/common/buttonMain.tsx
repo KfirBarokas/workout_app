@@ -1,3 +1,4 @@
+import { COLORS } from "@/constants/colors";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 interface ButtonProps {
@@ -7,7 +8,10 @@ interface ButtonProps {
 
 export default function ButtonMain({ label, onPress }: ButtonProps) {
     return (
-        <Pressable style={styles.button} onPress={onPress}>
+        <Pressable style={({ pressed }) => [
+            { backgroundColor: pressed ? COLORS.accentPrimaryPressed : COLORS.accentPrimary },
+            styles.button
+        ]} onPress={onPress}>
             <Text style={styles.text}>{label}</Text>
         </Pressable>
     )
@@ -15,7 +19,7 @@ export default function ButtonMain({ label, onPress }: ButtonProps) {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: '#D27D2C',
+        // backgroundColor: '#D27D2C',
         padding: 15,
         borderRadius: 30,
         width: 300,

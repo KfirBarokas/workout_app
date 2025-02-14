@@ -1,3 +1,4 @@
+import OtpField from "@/components/auth/otpField";
 import PageTitle from "@/components/auth/pageTitle";
 import ButtonMain from "@/components/common/buttonMain";
 import { COLORS } from "@/constants/colors";
@@ -9,7 +10,6 @@ import { OtpInput } from 'react-native-otp-entry'
 // TODO: Create a page template component
 
 // TODO: Fix proportions of this page
-// TODO: Add all colors to a single page with variables
 
 export default function Otp() {
 
@@ -20,54 +20,29 @@ export default function Otp() {
             <StatusBar hidden />
 
             <View style={styles.cardContainer}>
+                <View style={styles.topContainer}>
+                    <PageTitle title="OTP Verification" />
 
-                <PageTitle title="OTP Verification" />
 
-                <View style={styles.instructionTextContainer}>
-                    <Text style={styles.instructionText}>
-                        Enter the code we just sent to your number ********98
-                    </Text>
+                    <View style={styles.instructionTextContainer}>
+                        <Text style={styles.instructionText}>
+                            Enter the code we just sent to your number ********98
+                        </Text>
+                    </View>
+
+
+
+                    <OtpField setEnteredCode={setEnteredCode} />
                 </View>
 
-                <View style={styles.resendCodeContainer}>
-                    <Pressable>
-                        <Text>Didn't recive code?</Text><Text>Resend</Text>
-                    </Pressable>
+                <View style={styles.bottomContainer}>
+                    <View style={styles.resendCodeContainer}>
 
+                        <Text>Didn't recive code? </Text><Pressable hitSlop={15} onPress={() => { alert('resent code') }}><Text style={styles.resendCodeText}>Resend</Text></Pressable>
+
+                    </View>
+                    <ButtonMain label='Verify' onPress={() => { }} />
                 </View>
-
-                <OtpInput
-                    numberOfDigits={6}
-                    onTextChange={input => setEnteredCode(input)}
-                    focusColor="green"
-                    autoFocus={false}
-                    hideStick={true}
-                    // placeholder="******"
-                    blurOnFilled={true}
-                    type="numeric"
-                    secureTextEntry={false}
-                    focusStickBlinkingDuration={500}
-                    onFocus={() => console.log("Focused")}
-                    onBlur={() => console.log("Blurred")}
-                    onFilled={(text) => console.log(`OTP is ${text}`)}
-                    textInputProps={{
-                        accessibilityLabel: "One-Time Password",
-                    }}
-                    theme={{
-                        containerStyle: styles.otpContainer,
-                        pinCodeContainerStyle: styles.pinCodeContainer,
-                        pinCodeTextStyle: styles.pinCodeText,
-                        focusStickStyle: styles.focusStick,
-                        focusedPinCodeContainerStyle: styles.activePinCodeContainer,
-                        // placeholderTextStyle: styles.placeholderText,
-                        filledPinCodeContainerStyle: styles.filledPinCodeContainer,
-                        // disabledPinCodeContainerStyle: styles.disabledPinCodeContainer,
-                    }}
-
-                />
-
-
-                <ButtonMain label='Verify' onPress={() => { }} />
             </View>
         </View>
     )
@@ -76,62 +51,47 @@ export default function Otp() {
 
 const styles = StyleSheet.create({
     pageContainer: {
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.backgroundPrimary,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
     },
     cardContainer: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: COLORS.backgroundSurface,
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        // paddingTop: 80,
+        borderColor: COLORS.textPrimary,
+        borderWidth: 1,
         borderRadius: 20,
         height: '65%'
+    },
+    topContainer: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingTop: '20%'
+    },
+    bottomContainer: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingBottom: '10%'
     },
     instructionTextContainer: {
         flexDirection: 'column',
         alignItems: 'flex-end',
-        // backgroundColor: 'red',
         width: '70%'
     },
     instructionText: {
-        color: '#6B6B6B',
+        color: COLORS.textSecondry,
         textAlign: 'right',
         width: 190,
     },
     resendCodeContainer: {
         // marginTop: 200
-    },
-    otpContainer: {
-        gap: '12',
-        width: 'auto',
         flexDirection: 'row-reverse',
-        margin: 20
-        // backgroundColor: 'red',
     },
-    pinCodeText: {
-        color: 'black',
-        fontSize: 20,
-    },
-    pinCodeContainer: {
-        borderColor: '#D3C5B0',
-        borderWidth: 2,
-        backgroundColor: '#EAE2D3',
-        height: 50,
-        borderRadius: 8
-    },
-    filledPinCodeContainer: {
-        borderColor: '#D27D2C',
-        borderWidth: 2
-    },
-    activePinCodeContainer: {
-        borderColor: '#D3C5B0'
-    },
-    focusStick: {
-        color: 'black',
-        borderColor: 'black',
-        // TODO: HOW DO YOU CHANGE THE STICK COLOR??
+    resendCodeText: {
+        color: COLORS.accentPrimary,
+        textDecorationLine: 'underline'
     }
 });

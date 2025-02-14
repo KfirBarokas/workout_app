@@ -1,4 +1,18 @@
 export const COLORS = {
-    background: '#000000',
-
+    backgroundPrimary: '#F5F0E6',
+    backgroundSecondry: '#EAE2D3',
+    backgroundSurface: '#FFFFFF',
+    textPrimary: '#2D2D2D',
+    textSecondry: '#6B6B6B',
+    textDisabled: '#A0A0A0',
+    accentPrimary: '#D27D2C',
+    accentPrimaryPressed: '#B5651D',
+    stateSuccess: '#4CAF50',
+    stateWarning: '#FBC02D',
+    stateError: '#D32F2F',
+    buttonPrimary: '#D27D2C',
+    buttonSecondry: '#EAE2D3',
+    buttonDisabled: '#D3C5B0',
+    borderStandard: '#D3C5B0',
+    borderActiveInput: '#D27D2C',
 }
