@@ -1,4 +1,5 @@
 import express from "express";
+import { UserDataService } from "./database.mjs";
 
 const app = express();
 const PORT = 3000;
@@ -11,7 +12,7 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
     console.log("HI")
     res.json({
-        exists: false
+        exists: UserDataService.IsExists(res)//Check if works didnt test
     })
 });
 

@@ -66,6 +66,7 @@ export default function Login() {
         setEnteredCredential(loginCredential);
         setCredentialNotFoundType(credentialType);
 
+        // TODO: Pass credential type to the server
         let loginData = {
             credential: loginCredential
         }
