@@ -55,7 +55,7 @@ export default function Login() {
 
 
     async function LoginUser() {
-        router.push('/otp')
+
         let credentialType = GetCredentialType(loginCredential);
 
         if (credentialType === CREDENTIAL_TYPES.INVALID) {
@@ -70,6 +70,7 @@ export default function Login() {
         let loginData = {
             credential: loginCredential
         }
+        console.log(loginData)
         let response = await ServerHttpRequest('get', '/login', loginData)
 
         if (response) {

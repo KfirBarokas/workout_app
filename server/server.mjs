@@ -1,5 +1,7 @@
 import express from "express";
-import { UserDataService } from "./database.mjs";
+
+// Database helper functions
+import * as user_utils from './db_user.mjs'
 
 const app = express();
 const PORT = 3000;
@@ -12,7 +14,7 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
     console.log("HI")
     res.json({
-        exists: UserDataService.IsExists(res)//Check if works didnt test
+        exists: user_utils.IsExists(res)//Check if works didnt test
     })
 });
 

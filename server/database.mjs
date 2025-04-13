@@ -1,48 +1,14 @@
 import pg from 'pg'
-const { Client } = pg
+const { Pool } = pg
 
-const client = new Client({
+export const db = new Pool({
     user: 'KfirArch',
     password: '',
     host: 'localhost',
     port: '5432',
     database: 'workoutDB',
+    max: 20, // How many connections by default, if exceeded there is a wait time
+    connectionTimeoutMillis: 0, // How long to wait for a pool to give a connection
+    idleTimeoutMillis: 0, // When to get rid of the connection if not in use
 });
-
-await client.connect()
-
-export class UserDataService {
-    async IsExists() {
-        const query = {
-            // name: 'get-name',
-            // text: 'SELECT * FROM test WHERE age = $1',
-            text: 'SELECT EXISTS(SELECT 1 FROM users WHERE phone_number=$1)',
-            values: ['0541234567'],
-        }
-
-        try {
-            const result = await client.query(query)
-            console.log(result.rows)
-            return result
-        } catch (err) {
-            console.error(err)
-        } finally {
-            await client.end()
-        }
-    }
-}
-
-
-
-
-// https://node-postgres.com/apis/client
-
-// Close connection
-// client
-//     .end()
-//     .then(() => {
-//         console.log('Connection to PostgreSQL closed');
-//     })
-//     .catch((err) => {
-//         console.error('Error closing connection', err);
-//     });
+console.warn('Pool connections need to be tweaked to match server capabilities.')
