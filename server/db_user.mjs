@@ -1,11 +1,11 @@
 import { db } from "./database.mjs"
 
-export async function IsExists() {
-    const query = {
-        // name: 'get-name',
-        // text: 'SELECT * FROM test WHERE age = $1',
-        text: 'SELECT EXISTS(SELECT 1 FROM users WHERE phone_number=$1)',
-        values: ['0541234567'],
+export async function IsExists(userCredential, credentialType) {
+    // TODO: credential type could be NONE or INVALID (need to make a check)
+
+    let query = {
+        text: `SELECT EXISTS(SELECT 1 FROM users WHERE ${credentialType}=$1)`,
+        values: [userCredential],
     }
 
     try {

@@ -68,10 +68,11 @@ export default function Login() {
 
         // TODO: Pass credential type to the server
         let loginData = {
-            credential: loginCredential
+            credential: loginCredential,
+            credentialType: credentialType
         }
         console.log(loginData)
-        let response = await ServerHttpRequest('get', '/login', loginData)
+        let response = await ServerHttpRequest('post', '/login', loginData)
 
         if (response) {
             console.log(response.data);

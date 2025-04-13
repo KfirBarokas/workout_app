@@ -4,6 +4,8 @@ import express from "express";
 import * as user_utils from './db_user.mjs'
 
 const app = express();
+
+app.use(express.json())
 const PORT = 3000;
 
 app.get('/', (req, res) => {
@@ -11,10 +13,12 @@ app.get('/', (req, res) => {
 });
 
 
-app.get('/login', (req, res) => {
+app.post('/login', (req, res) => {
     console.log("HI")
+    console.log(req.body)
+
     res.json({
-        exists: user_utils.IsExists(res)//Check if works didnt test
+        exists: user_utils.IsExists(req.body.credential, req.body.credentialType)//Check if works didnt test
     })
 });
 
