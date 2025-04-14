@@ -11,7 +11,7 @@ export async function IsExists(userCredential, credentialType) {
     try {
         const result = await db.query(query)
         console.log(result.rows)
-        return result
+        return result.rows[0].exists// Return the value inside the query
     } catch (err) {
         console.error(err)
     }

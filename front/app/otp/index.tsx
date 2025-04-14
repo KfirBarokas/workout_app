@@ -2,6 +2,7 @@ import OtpField from "@/components/auth/otpField";
 import PageTitle from "@/components/auth/pageTitle";
 import ButtonMain from "@/components/common/buttonMain";
 import { COLORS } from "@/constants/colors";
+import ServerHttpRequest from "@/services/axios_request.mjs";
 import { useState } from "react";
 import { View, StatusBar, StyleSheet, Text, Pressable } from "react-native";
 
@@ -14,6 +15,14 @@ import { OtpInput } from 'react-native-otp-entry'
 export default function Otp() {
 
     const [enteredCode, setEnteredCode] = useState('')
+
+    async function SendCodeCheckRequest() {
+        let OTPcheckData = {
+            code: enteredCode,
+            credential: 
+        }
+        let codeValid = await ServerHttpRequest('post', '/checkOTP',)
+    }
 
     return (
         <View style={[StyleSheet.absoluteFill, styles.pageContainer]}>
@@ -41,7 +50,7 @@ export default function Otp() {
                         <Text>Didn't recive code? </Text><Pressable hitSlop={15} onPress={() => { alert('resent code') }}><Text style={styles.resendCodeText}>Resend</Text></Pressable>
 
                     </View>
-                    <ButtonMain label='Verify' onPress={() => { }} />
+                    <ButtonMain label='Verify' onPress={SendCodeCheckRequest} />
                 </View>
             </View>
         </View>

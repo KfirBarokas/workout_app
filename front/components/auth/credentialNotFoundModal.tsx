@@ -9,7 +9,7 @@ interface CredentialNotFoundModalProps {
     isVisible: boolean,
     setIsVisible: (isVisible: boolean) => void,
     enteredCredential: string,
-    credentialType: number
+    credentialType: string
 }
 
 export default function CredentialNotFoundModal({ isVisible, setIsVisible, enteredCredential, credentialType }: CredentialNotFoundModalProps) {

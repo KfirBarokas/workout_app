@@ -66,17 +66,22 @@ export default function Login() {
         setEnteredCredential(loginCredential);
         setCredentialNotFoundType(credentialType);
 
-        // TODO: Pass credential type to the server
-        let loginData = {
+        let credentialData = {
             credential: loginCredential,
             credentialType: credentialType
         }
-        console.log(loginData)
-        let response = await ServerHttpRequest('post', '/login', loginData)
+        console.log(credentialData)
+        let response = await ServerHttpRequest('post', '/login', credentialData)
 
         if (response) {
             console.log(response.data);
-            if (!response.data.exists) {
+            if (response.data.exists) {
+                //OTP
+                ServerHttpRequest('post', '/sendOTP', credentialData)
+            }
+            else {
+                // If the user doesn't exist we don't want to send an OTP 
+                // straight away because maybe it just means that the credential is incorrect
                 ShowInvalidCredentialModal()
             }
         }
