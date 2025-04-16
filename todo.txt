@@ -7,3 +7,14 @@ https://node-postgres.com/features/connecting
 to view a database:
 1. switch to postgres user: sudo su postgres 
 2. enter the database: psql -d workoutDB
+
+
+remove .env and other secret stuff from github
+
+
+user:
+    email
+    phone_number
+    username
+    country
+    profile_picture
