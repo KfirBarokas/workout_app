@@ -3,6 +3,7 @@ import PageTitle from "@/components/auth/pageTitle";
 import ButtonMain from "@/components/common/buttonMain";
 import { COLORS } from "@/constants/colors";
 import ServerHttpRequest from "@/services/axios_request.mjs";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { View, StatusBar, StyleSheet, Text, Pressable } from "react-native";
 
@@ -13,13 +14,15 @@ import { OtpInput } from 'react-native-otp-entry'
 // TODO: Fix proportions of this page
 
 export default function Otp() {
+    const { credential, credentialType } = useLocalSearchParams()
 
     const [enteredCode, setEnteredCode] = useState('')
 
     async function SendCodeCheckRequest() {
         let OTPcheckData = {
             code: enteredCode,
-            credential: 
+            credential: credential,
+            credentialType: credentialType
         }
         let codeValid = await ServerHttpRequest('post', '/checkOTP',)
     }

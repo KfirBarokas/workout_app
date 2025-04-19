@@ -1,7 +1,7 @@
 import ButtonMain from "@/components/common/buttonMain";
 import PageTitle from "@/components/auth/pageTitle";
 import TextField from "@/components/common/textField";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View, StyleSheet, Switch, Modal, StatusBar } from "react-native";
 import { router } from "expo-router";
@@ -34,6 +34,8 @@ function GetCredentialType(credential: string) {
 
 
 export default function Login() {
+    const router = useRouter();
+
     const [loginCredential, setLoginCredential] = useState('');
 
 
@@ -70,7 +72,7 @@ export default function Login() {
             credential: loginCredential,
             credentialType: credentialType
         }
-        console.log(credentialData)
+
         let response = await ServerHttpRequest('post', '/login', credentialData)
 
         if (response) {
@@ -78,6 +80,7 @@ export default function Login() {
             if (response.data.exists) {
                 //OTP
                 ServerHttpRequest('post', '/sendOTP', credentialData)
+                router.navigate({ pathname: `/otp`, params: { credentialData.credential, credentialData.credentialType } })
             }
             else {
                 // If the user doesn't exist we don't want to send an OTP 
