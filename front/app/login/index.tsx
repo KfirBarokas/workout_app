@@ -1,17 +1,19 @@
 import ButtonMain from "@/components/common/buttonMain";
 import PageTitle from "@/components/auth/pageTitle";
-import TextField from "@/components/common/textField";
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
-import { Pressable, Text, View, StyleSheet, Switch, Modal, StatusBar } from "react-native";
-import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { Pressable, Text, View, StyleSheet, StatusBar, Button } from "react-native";
 
 import { COLORS } from "@/constants/colors";
-import { CREDENTIAL_TYPES, INVALID_CREDENTIAL_MESSAGES } from "@/constants/auth"
+import { CREDENTIAL_TYPES, INVALID_CREDENTIAL_MESSAGES } from "@/constants/auth";
 
-import ServerHttpRequest from '../../services/axios_request.mjs'
+import ServerHttpRequest from "../../services/axios_request.mjs";
 import CredentialNotFoundModal from "@/components/auth/credentialNotFoundModal";
 import CredentialTextField from "@/components/auth/credentialTextField";
+
+// ✅ Import from your helper instead of raw Firebase
+import { signUp, login } from "../../services/firebase_helper.mjs";
+import { useGoogleAuth } from "@/firebase/googleAuth";
 
 function isValidEmail(input: string) {
     return String(input)
@@ -28,37 +30,40 @@ function GetCredentialType(credential: string) {
     if (/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g.test(credential)) {
         return CREDENTIAL_TYPES.PHONE_NUMBER;
     }
-
     return CREDENTIAL_TYPES.INVALID;
 }
 
-
 export default function Login() {
+    const { request, promptAsync, signInWithGoogle } = useGoogleAuth();
+
+
     const router = useRouter();
 
-    const [loginCredential, setLoginCredential] = useState('');
+    const [loginCredential, setLoginCredential] = useState("");
+    const [invalidCredentialModalVisible, setInvalidCredentialModalVisible] =
+        useState(false);
+    const [invalidCredentialMessage, setInvalidCredentialMessage] = useState(
+        INVALID_CREDENTIAL_MESSAGES.noMessage
+    );
+    const [credentialNotFoundType, setCredentialNotFoundType] = useState(
+        CREDENTIAL_TYPES.NONE
+    );
+    const [enteredCredential, setEnteredCredential] = useState("");
 
-
-    const [invalidCredentialModalVisible, setInvalidCredentialModalVisible] = useState(false);
-    function ShowInvalidCredentialModal() { setInvalidCredentialModalVisible(true); }
-
-    const [invalidCredentialMessage, setInvalidCredentialMessage] = useState(INVALID_CREDENTIAL_MESSAGES.noMessage)
-    const [credentialNotFoundType, setCredentialNotFoundType] = useState(CREDENTIAL_TYPES.NONE)
-    const [enteredCredential, setEnteredCredential] = useState('')
+    function ShowInvalidCredentialModal() {
+        setInvalidCredentialModalVisible(true);
+    }
 
     function UpdateInvalidCredentialMessage(credential: string) {
         if (!credential) {
-            setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.empty)
-        }
-        else {
-            setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.notPhoneOrEmail)
+            setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.empty);
+        } else {
+            setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.notPhoneOrEmail);
         }
     }
 
-
     async function LoginUser() {
-
-        let credentialType = GetCredentialType(loginCredential);
+        const credentialType = GetCredentialType(loginCredential);
 
         if (credentialType === CREDENTIAL_TYPES.INVALID) {
             UpdateInvalidCredentialMessage(loginCredential);
@@ -68,27 +73,39 @@ export default function Login() {
         setEnteredCredential(loginCredential);
         setCredentialNotFoundType(credentialType);
 
-        let credentialData = {
+        const credentialData = {
             credential: loginCredential,
-            credentialType: credentialType
-        }
+            credentialType: credentialType,
+        };
 
-        let response = await ServerHttpRequest('post', '/login', credentialData)
+        try {
+            // 🔹 Example usage of helper
+            if (credentialType === CREDENTIAL_TYPES.EMAIL) {
+                // try login with Firebase (password could be collected separately)
+                const user = await login(loginCredential, "123456");
+                console.log("Firebase login success:", user.uid);
+            }
 
-        if (response) {
-            console.log(response.data);
-            if (response.data.exists) {
-                //OTP
-                ServerHttpRequest('post', '/sendOTP', credentialData)
-                router.navigate({ pathname: `/otp`, params: { credentialData.credential, credentialData.credentialType } })
+            // 🔹 Keep your backend request logic
+            const response = await ServerHttpRequest("post", "/login", credentialData);
+
+            if (response) {
+                if (response.data.exists) {
+                    await ServerHttpRequest("post", "/sendOTP", credentialData);
+                    router.navigate({ pathname: `/otp` });
+                } else {
+                    ShowInvalidCredentialModal();
+                }
             }
-            else {
-                // If the user doesn't exist we don't want to send an OTP 
-                // straight away because maybe it just means that the credential is incorrect
-                ShowInvalidCredentialModal()
-            }
+        } catch (err: any) {
+            console.error("Login error:", err.message);
+            ShowInvalidCredentialModal();
         }
     }
+
+    useEffect(() => {
+        signInWithGoogle();
+    }, [signInWithGoogle]);
 
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
@@ -106,44 +123,41 @@ export default function Login() {
             <CredentialTextField
                 value={loginCredential}
                 placeholder="Email/phone number"
-                onChangeText={input => setLoginCredential(input)}
+                onChangeText={(input) => setLoginCredential(input)}
                 invalidCredentialMessage={invalidCredentialMessage}
+            />
+
+            <Button
+                title="Continue with Google"
+                disabled={!request}
+                onPress={() => promptAsync()}
             />
 
             <Link href="/(tabs)" asChild>
                 <Pressable style={styles.pressableTextContainer}>
-                    <Text style={styles.pressableText}>Forgot password? click here</Text>
+                    <Text style={styles.pressableText}>
+                        Forgot password? click here
+                    </Text>
                 </Pressable>
             </Link>
 
-            <ButtonMain label='Login' onPress={LoginUser} />
-
+            <ButtonMain label="Login" onPress={LoginUser} />
         </View>
-    )
+    );
 }
-
 
 const styles = StyleSheet.create({
     mainContainer: {
-        backgroundColor: COLORS.background,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    googleLoginButton: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 30,
-        width: 250,
-        alignItems: 'center',
-        marginTop: 30
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
     },
     pressableTextContainer: {
-        marginTop: 20
+        marginTop: 20,
     },
     pressableText: {
         fontSize: 15,
-        fontFamily: 'underline',
-        color: 'white'
-    }
+        fontFamily: "underline",
+        color: "white",
+    },
 });

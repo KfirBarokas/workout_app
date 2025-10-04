@@ -1,52 +1,61 @@
 {
-  "expo": {
-    "name": "workout",
-    "slug": "workout",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.workout"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.anonymous.workout",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": ""
-    },
-    "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photoPermission": "lalalala"
+    "expo": {
+        "name": "workout",
+        "slug": "workout",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "",
+        "scheme": "myapp",
+        "userInterfaceStyle": "automatic",
+        "newArchEnabled": true,
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.anonymous.workout"
+        },
+        "android": {
+            "googleServicesFile": "./google-services.json",
+            "adaptiveIcon": {
+                "foregroundImage": "",
+                "backgroundColor": "#ffffff"
+            },
+            "package": "com.anonymous.workout",
+            "permissions": [
+                "android.permission.RECORD_AUDIO"
+            ]
+        },
+        "web": {
+            "bundler": "metro",
+            "output": "static",
+            "favicon": ""
+        },
+        "plugins": [
+            [
+                "expo-image-picker",
+                {
+                    "photoPermission": "lalalala"
+                }
+            ],
+            "expo-router",
+            [
+                "expo-splash-screen",
+                {
+                    "image": "./assets/images/splash-icon.png",
+                    "imageWidth": 200,
+                    "resizeMode": "contain",
+                    "backgroundColor": "#ffffff"
+                }
+            ]
+        ],
+        "experiments": {
+            "typedRoutes": true
+        },
+        "extra": {
+            "router": {
+                "origin": false
+            },
+            "eas": {
+                "projectId": "872b3747-ebcb-4a55-9266-9aa59e450ade"
+            }
         }
-      ],
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true
     }
-  }
 }
