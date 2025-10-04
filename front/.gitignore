@@ -15,14 +15,14 @@ dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# Native / Android
 *.orig.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
-android/
+# android/   <-- REMOVE this line
 
 # Metro
 .metro-health-check*
