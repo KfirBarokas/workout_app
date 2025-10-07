@@ -11,6 +11,10 @@ import ServerHttpRequest from "../../services/axios_request.mjs";
 import CredentialNotFoundModal from "@/components/auth/credentialNotFoundModal";
 import CredentialTextField from "@/components/auth/credentialTextField";
 
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { auth } from '../../firebase/firebase'; // optional, if using Firebase Auth
+import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+
 
 function isValidEmail(input: string) {
     return String(input)
@@ -97,6 +101,29 @@ export default function Login() {
         }
     }
 
+    const signInWithGoogle = async () => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            console.log('User info:', userInfo);
+
+            if (userInfo.type === 'success' && userInfo.data?.idToken) {
+                const { idToken } = userInfo.data;
+                const googleCredential = GoogleAuthProvider.credential(idToken);
+                const userCredential = await signInWithCredential(auth, googleCredential);
+                console.log('✅ Firebase user:', userCredential.user);
+                router.navigate({ pathname: `/(tabs)` });
+
+            } else {
+                console.log('❌ Google sign-in canceled or failed:', userInfo.type);
+            }
+
+            // save userInfo.idToken or userInfo.user to your app state / backend
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
             <StatusBar hidden />
@@ -117,7 +144,9 @@ export default function Login() {
                 invalidCredentialMessage={invalidCredentialMessage}
             />
 
-
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Button title="Sign in with Google" onPress={signInWithGoogle} />
+            </View>
 
             <Link href="/(tabs)" asChild>
                 <Pressable style={styles.pressableTextContainer}>

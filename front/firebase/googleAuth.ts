@@ -7,7 +7,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export function useGoogleAuth() {
     const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-        clientId: "AIzaSyDmAjfnBcFz2VqQ_MPSgpINyKwiLb7DnG8.apps.googleusercontent.com", // from Firebase console
+        clientId: "766634426305-gdh4u518okpthasg3keukh55jbp5fq28.apps.googleusercontent.com", // from Firebase console
     });
 
     const auth = getAuth();

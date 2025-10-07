@@ -173,6 +173,13 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    //     // Import the Firebase BoM (Bill of Materials)
+    // implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+
+    // // Example Firebase products
+    // // implementation("com.google.firebase:firebase-analytics")
+    // implementation("com.google.firebase:firebase-auth") // for Google Sign-In with Firebase
 }
 
 apply plugin: 'com.google.gms.google-services'
