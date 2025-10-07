@@ -11,9 +11,6 @@ import ServerHttpRequest from "../../services/axios_request.mjs";
 import CredentialNotFoundModal from "@/components/auth/credentialNotFoundModal";
 import CredentialTextField from "@/components/auth/credentialTextField";
 
-// ✅ Import from your helper instead of raw Firebase
-import { signUp, login } from "../../services/firebase_helper.mjs";
-import { useGoogleAuth } from "@/firebase/googleAuth";
 
 function isValidEmail(input: string) {
     return String(input)
@@ -34,9 +31,6 @@ function GetCredentialType(credential: string) {
 }
 
 export default function Login() {
-    const { request, promptAsync, signInWithGoogle } = useGoogleAuth();
-
-
     const router = useRouter();
 
     const [loginCredential, setLoginCredential] = useState("");
@@ -82,8 +76,8 @@ export default function Login() {
             // 🔹 Example usage of helper
             if (credentialType === CREDENTIAL_TYPES.EMAIL) {
                 // try login with Firebase (password could be collected separately)
-                const user = await login(loginCredential, "123456");
-                console.log("Firebase login success:", user.uid);
+                // const user = await login(loginCredential, "123456");
+                // console.log("Firebase login success:", user.uid);
             }
 
             // 🔹 Keep your backend request logic
@@ -102,10 +96,6 @@ export default function Login() {
             ShowInvalidCredentialModal();
         }
     }
-
-    useEffect(() => {
-        signInWithGoogle();
-    }, [signInWithGoogle]);
 
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
@@ -127,11 +117,7 @@ export default function Login() {
                 invalidCredentialMessage={invalidCredentialMessage}
             />
 
-            <Button
-                title="Continue with Google"
-                disabled={!request}
-                onPress={() => promptAsync()}
-            />
+
 
             <Link href="/(tabs)" asChild>
                 <Pressable style={styles.pressableTextContainer}>

@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "766634426305-gsi9b8ls9lie28eu66l1ekansgmoehm6.apps.googleusercontent.com",
+          "client_id": "766634426305-7jspom143crhl18ksdo44b4jshfndk9o.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.anonymous.workout",
-            "certificate_hash": "12dda93f7be5b668a1f2398f6227576d76516075"
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {

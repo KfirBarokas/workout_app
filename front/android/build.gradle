@@ -9,6 +9,8 @@ buildscript {
         kotlinVersion = findProperty('android.kotlinVersion') ?: '1.9.25'
 
         ndkVersion = "26.1.10909125"
+
+        googlePlayServicesAuthVersion = "21.3.0" // <--- From https://react-native-google-signin.github.io/docs/setting-up/android
     }
     repositories {
         google()
