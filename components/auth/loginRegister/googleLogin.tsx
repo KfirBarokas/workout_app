@@ -1,7 +1,7 @@
 // firebaseHelper.js
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 import * as Google from "expo-auth-session/providers/google";
-import { auth } from "../../firebase/firebase";
+import { auth } from "@/services/firebase/firebase";
 
 export const useGoogleAuth = () => {
     const [request, response, promptAsync] = Google.useIdTokenAuthRequest({

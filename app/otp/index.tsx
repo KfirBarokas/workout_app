@@ -1,4 +1,4 @@
-import OtpField from "@/components/auth/otpField";
+import OtpField from "@/components/auth/otp/otpField";
 import PageTitle from "@/components/auth/pageTitle";
 import ButtonMain from "@/components/common/buttonMain";
 import { COLORS } from "@/constants/colors";

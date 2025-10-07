@@ -1,18 +1,12 @@
-import ButtonMain from "@/components/common/buttonMain";
-import PageTitle from "@/components/auth/pageTitle";
 import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, Text, View, StyleSheet, StatusBar, Button } from "react-native";
 
-import { COLORS } from "@/constants/colors";
 import { CREDENTIAL_TYPES, INVALID_CREDENTIAL_MESSAGES } from "@/constants/auth";
 
 import ServerHttpRequest from "../../services/axios_request.mjs";
-import CredentialNotFoundModal from "@/components/auth/credentialNotFoundModal";
-import CredentialTextField from "@/components/auth/credentialTextField";
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { auth } from '../../firebase/firebase'; // optional, if using Firebase Auth
+import { auth } from '../../services/firebase/firebase'; // optional, if using Firebase Auth
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 
 
@@ -34,7 +28,7 @@ function GetCredentialType(credential: string) {
     return CREDENTIAL_TYPES.INVALID;
 }
 
-export default function Login() {
+export function useLogin() {
     const router = useRouter();
 
     const [loginCredential, setLoginCredential] = useState("");
@@ -101,7 +95,7 @@ export default function Login() {
         }
     }
 
-    const signInWithGoogle = async () => {
+    async function signInWithGoogle() {
         try {
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
@@ -124,55 +118,15 @@ export default function Login() {
         }
     };
 
-    return (
-        <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
-            <StatusBar hidden />
-
-            <CredentialNotFoundModal
-                isVisible={invalidCredentialModalVisible}
-                setIsVisible={setInvalidCredentialModalVisible}
-                credentialType={credentialNotFoundType}
-                enteredCredential={enteredCredential}
-            />
-
-            <PageTitle title="Login" />
-
-            <CredentialTextField
-                value={loginCredential}
-                placeholder="Email/phone number"
-                onChangeText={(input) => setLoginCredential(input)}
-                invalidCredentialMessage={invalidCredentialMessage}
-            />
-
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <Button title="Sign in with Google" onPress={signInWithGoogle} />
-            </View>
-
-            <Link href="/(tabs)" asChild>
-                <Pressable style={styles.pressableTextContainer}>
-                    <Text style={styles.pressableText}>
-                        Forgot password? click here
-                    </Text>
-                </Pressable>
-            </Link>
-
-            <ButtonMain label="Login" onPress={LoginUser} />
-        </View>
-    );
+    return {
+        loginCredential,
+        setLoginCredential,
+        invalidCredentialModalVisible,
+        setInvalidCredentialModalVisible,
+        invalidCredentialMessage,
+        credentialNotFoundType,
+        enteredCredential,
+        LoginUser,
+        signInWithGoogle,
+    };
 }
-
-const styles = StyleSheet.create({
-    mainContainer: {
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    pressableTextContainer: {
-        marginTop: 20,
-    },
-    pressableText: {
-        fontSize: 15,
-        fontFamily: "underline",
-        color: "white",
-    },
-});

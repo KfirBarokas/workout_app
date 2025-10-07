@@ -1,5 +1,5 @@
 import { StyleSheet, TextInput, View, Text } from "react-native"
-import TextField from "../common/textField"
+import TextField from "../../common/textField"
 
 interface CredentialTextFieldProps {
     value: string,
