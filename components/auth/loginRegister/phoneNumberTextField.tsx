@@ -1,18 +1,18 @@
 import { StyleSheet, TextInput, View, Text } from "react-native"
 import TextField from "../../common/textField"
 
-interface CredentialTextFieldProps {
+interface PhoneNumberTextFieldProps {
     value: string,
     onChangeText: (input: string) => void,
     placeholder: string,
-    invalidCredentialMessage: string
+    invalidPhoneNumberMessage: string
 }
 
-export default function CredentialTextField({ value, onChangeText, placeholder, invalidCredentialMessage }: CredentialTextFieldProps) {
+export default function PhoneNumberTextField({ value, onChangeText, placeholder, invalidPhoneNumberMessage }: PhoneNumberTextFieldProps) {
     return (
         <View style={styles.textFieldContainer}>
-            <TextField placeholder={placeholder} value={value} onChangeText={onChangeText} />
-            <Text style={styles.errorText}>{invalidCredentialMessage}</Text>
+            <TextField placeholder={placeholder} value={value} onChangeText={onChangeText} keyboardType="phone-pad" />
+            <Text style={styles.errorText}>{invalidPhoneNumberMessage}</Text>
         </View>
     )
 }

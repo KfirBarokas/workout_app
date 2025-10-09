@@ -3,41 +3,34 @@ import { Link } from "expo-router";
 import { useLogin } from "./useLogin";
 
 import PageTitle from "@/components/auth/loginRegister/pageTitle";
-import CredentialTextField from "@/components/auth/loginRegister/credentialTextField";
+import PhoneNumberTextField from "@/components/auth/loginRegister/phoneNumberTextField";
 import ButtonMain from "@/components/common/buttonMain";
-import CredentialNotFoundModal from "@/components/auth/credentialNotFoundModal";
+
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+import { auth } from "@/services/firebase/firebase";
 
 export default function Login() {
+
     const {
-        loginCredential,
-        setLoginCredential,
-        invalidCredentialModalVisible,
-        setInvalidCredentialModalVisible,
-        invalidCredentialMessage,
-        credentialNotFoundType,
-        enteredCredential,
-        LoginUser,
+        phoneNumber,
+        setPhoneNumber,
+        invalidPhoneNumberMessage,
+        loginUser,
         signInWithGoogle,
+        recaptchaVerifierRef
     } = useLogin();
 
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
             <StatusBar hidden />
 
-            <CredentialNotFoundModal
-                isVisible={invalidCredentialModalVisible}
-                setIsVisible={setInvalidCredentialModalVisible}
-                credentialType={credentialNotFoundType}
-                enteredCredential={enteredCredential}
-            />
-
             <PageTitle title="Login" />
 
-            <CredentialTextField
-                value={loginCredential}
-                placeholder="Email/phone number"
-                onChangeText={(input) => setLoginCredential(input)}
-                invalidCredentialMessage={invalidCredentialMessage}
+            <PhoneNumberTextField
+                value={phoneNumber}
+                placeholder="Phone number"
+                onChangeText={(input) => setPhoneNumber(input)}
+                invalidPhoneNumberMessage={invalidPhoneNumberMessage}
             />
 
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -52,7 +45,18 @@ export default function Login() {
                 </Pressable>
             </Link>
 
-            <ButtonMain label="Login" onPress={LoginUser} />
+            <FirebaseRecaptchaVerifierModal
+                ref={recaptchaVerifierRef}
+                firebaseConfig={auth.app.options}
+                style={{
+                    flex: 0,
+                    height: 100,           // shrink height
+                    width: 100,            // shrink width
+                    backgroundColor: 'transparent', // remove background
+                }}
+            />
+
+            <ButtonMain label="Login" onPress={loginUser} />
         </View>
     );
 }

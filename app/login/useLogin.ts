@@ -1,97 +1,75 @@
-import { Link, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-
-import { CREDENTIAL_TYPES, INVALID_CREDENTIAL_MESSAGES } from "@/constants/auth";
-
-import ServerHttpRequest from "../../services/axios_request.mjs";
-
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { auth } from '../../services/firebase/firebase'; // optional, if using Firebase Auth
+import { useRouter } from "expo-router";
+import { useState, useRef } from "react";
+import { INVALID_CREDENTIAL_MESSAGES } from "@/constants/auth";
+import { sendOTP } from "./authFlow";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+import { auth } from "@/services/firebase/firebase";
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 
-
-function isValidEmail(input: string) {
-    return String(input)
-        .toLowerCase()
-        .match(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        );
+// --- Helper functions ---
+function normalizePhone(phone: string) {
+    return phone.replace(/[\s()-]/g, "");
 }
 
-function GetCredentialType(credential: string) {
-    if (isValidEmail(credential)) {
-        return CREDENTIAL_TYPES.EMAIL;
-    }
-    if (/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g.test(credential)) {
-        return CREDENTIAL_TYPES.PHONE_NUMBER;
-    }
-    return CREDENTIAL_TYPES.INVALID;
+function isPhoneNumberValid(phone: string) {
+    // Israeli mobile numbers: 05 + 8 digits
+    return /^05\d{8}$/.test(phone);
 }
 
+function toE164(phone: string) {
+    const normalized = normalizePhone(phone);
+    if (normalized.startsWith("0")) {
+        return "+972" + normalized.slice(1);
+    }
+    return normalized; // already in E.164
+}
+
+function formatPhoneNumber(phone: string) {
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 10) return digits.slice(0, 3) + "-" + digits.slice(3);
+    return digits.slice(0, 3) + "-" + digits.slice(3, 10);
+}
+
+// --- Hook ---
 export function useLogin() {
     const router = useRouter();
 
-    const [loginCredential, setLoginCredential] = useState("");
-    const [invalidCredentialModalVisible, setInvalidCredentialModalVisible] =
-        useState(false);
-    const [invalidCredentialMessage, setInvalidCredentialMessage] = useState(
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [invalidPhoneNumberMessage, setInvalidPhoneNumberMessage] = useState(
         INVALID_CREDENTIAL_MESSAGES.noMessage
     );
-    const [credentialNotFoundType, setCredentialNotFoundType] = useState(
-        CREDENTIAL_TYPES.NONE
-    );
-    const [enteredCredential, setEnteredCredential] = useState("");
 
-    function ShowInvalidCredentialModal() {
-        setInvalidCredentialModalVisible(true);
+    // Recaptcha ref for Expo
+    const recaptchaVerifierRef = useRef<FirebaseRecaptchaVerifierModal>(null);
+
+    // Update phone input and auto-format with dash
+    function handlePhoneInput(input: string) {
+        const formatted = formatPhoneNumber(input);
+        setPhoneNumber(formatted);
     }
 
-    function UpdateInvalidCredentialMessage(credential: string) {
-        if (!credential) {
-            setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.empty);
-        } else {
-            setInvalidCredentialMessage(INVALID_CREDENTIAL_MESSAGES.notPhoneOrEmail);
-        }
+    function showInvalidPhoneNumberModal(message: string) {
+        setInvalidPhoneNumberMessage(message);
     }
 
-    async function LoginUser() {
-        const credentialType = GetCredentialType(loginCredential);
-
-        if (credentialType === CREDENTIAL_TYPES.INVALID) {
-            UpdateInvalidCredentialMessage(loginCredential);
+    async function loginUser() {
+        const normalizedPhoneNumber = normalizePhone(phoneNumber);
+        if (!isPhoneNumberValid(normalizedPhoneNumber)) {
+            showInvalidPhoneNumberModal(INVALID_CREDENTIAL_MESSAGES.notPhoneNumber);
             return;
         }
 
-        setEnteredCredential(loginCredential);
-        setCredentialNotFoundType(credentialType);
-
-        const credentialData = {
-            credential: loginCredential,
-            credentialType: credentialType,
-        };
+        const e164PhoneNumber = toE164(normalizedPhoneNumber);
 
         try {
-            // 🔹 Example usage of helper
-            if (credentialType === CREDENTIAL_TYPES.EMAIL) {
-                // try login with Firebase (password could be collected separately)
-                // const user = await login(loginCredential, "123456");
-                // console.log("Firebase login success:", user.uid);
-            }
-
-            // 🔹 Keep your backend request logic
-            const response = await ServerHttpRequest("post", "/login", credentialData);
-
-            if (response) {
-                if (response.data.exists) {
-                    await ServerHttpRequest("post", "/sendOTP", credentialData);
-                    router.navigate({ pathname: `/otp` });
-                } else {
-                    ShowInvalidCredentialModal();
-                }
-            }
+            console.log("Sending OTP to:", e164PhoneNumber);
+            await sendOTP(e164PhoneNumber, recaptchaVerifierRef.current);
+            router.push("/otp"); // navigate to OTP input screen
         } catch (err: any) {
             console.error("Login error:", err.message);
-            ShowInvalidCredentialModal();
+            showInvalidPhoneNumberModal("Failed to send OTP. Try again.");
         }
     }
 
@@ -99,34 +77,27 @@ export function useLogin() {
         try {
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
-            console.log('User info:', userInfo);
 
-            if (userInfo.type === 'success' && userInfo.data?.idToken) {
+            if (userInfo?.data?.idToken) {
                 const { idToken } = userInfo.data;
                 const googleCredential = GoogleAuthProvider.credential(idToken);
                 const userCredential = await signInWithCredential(auth, googleCredential);
-                console.log('✅ Firebase user:', userCredential.user);
-                router.navigate({ pathname: `/(tabs)` });
-
+                console.log("Firebase user:", userCredential.user);
+                router.replace("/(tabs)");
             } else {
-                console.log('❌ Google sign-in canceled or failed:', userInfo.type);
+                console.warn("Google sign-in canceled or failed");
             }
-
-            // save userInfo.idToken or userInfo.user to your app state / backend
         } catch (error) {
-            console.error(error);
+            console.error("Google sign-in error:", error);
         }
-    };
+    }
 
     return {
-        loginCredential,
-        setLoginCredential,
-        invalidCredentialModalVisible,
-        setInvalidCredentialModalVisible,
-        invalidCredentialMessage,
-        credentialNotFoundType,
-        enteredCredential,
-        LoginUser,
+        phoneNumber,
+        setPhoneNumber: handlePhoneInput,
+        invalidPhoneNumberMessage,
+        loginUser,
         signInWithGoogle,
+        recaptchaVerifierRef, // now correctly a hook inside the custom hook
     };
 }

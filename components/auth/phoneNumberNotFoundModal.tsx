@@ -2,17 +2,15 @@ import React, { useState } from 'react'
 import PropTypes, { bool } from 'prop-types'
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
 
-import { CREDENTIAL_TYPES } from '@/constants/auth';
 import { router } from 'expo-router';
 
-interface CredentialNotFoundModalProps {
+interface PhoneNumberNotFoundModalProps {
     isVisible: boolean,
     setIsVisible: (isVisible: boolean) => void,
-    enteredCredential: string,
-    credentialType: string
+    enteredPhoneNumber: string,
 }
 
-export default function CredentialNotFoundModal({ isVisible, setIsVisible, enteredCredential, credentialType }: CredentialNotFoundModalProps) {
+export default function PhoneNumberNotFoundModal({ isVisible, setIsVisible, enteredPhoneNumber }: PhoneNumberNotFoundModalProps) {
 
     function OnSignupPress() {
         router.push('/otp');
@@ -29,7 +27,7 @@ export default function CredentialNotFoundModal({ isVisible, setIsVisible, enter
             }}>
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <Text style={styles.modalText}>We can't find {credentialType === CREDENTIAL_TYPES.EMAIL ? 'email' : 'phone number'}: {enteredCredential}</Text>
+                    <Text style={styles.modalText}>We can't find phone number: {enteredPhoneNumber}</Text>
                     <View style={styles.modalPressablesContainer}>
                         <Pressable
                             style={styles.buttonClose}
