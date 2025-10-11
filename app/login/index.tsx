@@ -1,23 +1,20 @@
 import { View, StyleSheet, StatusBar, Button, Pressable, Text } from "react-native";
 import { Link } from "expo-router";
 import { useLogin } from "./useLogin";
-
 import PageTitle from "@/components/auth/loginRegister/pageTitle";
 import PhoneNumberTextField from "@/components/auth/loginRegister/phoneNumberTextField";
 import ButtonMain from "@/components/common/buttonMain";
-
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { auth } from "@/services/firebase/firebase";
 
 export default function Login() {
-
     const {
         phoneNumber,
         setPhoneNumber,
         invalidPhoneNumberMessage,
         loginUser,
         signInWithGoogle,
-        recaptchaVerifierRef
+        recaptchaVerifierRef,
     } = useLogin();
 
     return (
@@ -33,26 +30,26 @@ export default function Login() {
                 invalidPhoneNumberMessage={invalidPhoneNumberMessage}
             />
 
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <Button title="Sign in with Google" onPress={signInWithGoogle} />
             </View>
 
             <Link href="/(tabs)" asChild>
                 <Pressable style={styles.pressableTextContainer}>
-                    <Text style={styles.pressableText}>
-                        Forgot password? click here
-                    </Text>
+                    <Text style={styles.pressableText}>Forgot password? click here</Text>
                 </Pressable>
             </Link>
 
+            {/* Single reCAPTCHA modal */}
             <FirebaseRecaptchaVerifierModal
                 ref={recaptchaVerifierRef}
                 firebaseConfig={auth.app.options}
+                attemptInvisibleVerification={false} // use true if invisible works
                 style={{
                     flex: 0,
-                    height: 100,           // shrink height
-                    width: 100,            // shrink width
-                    backgroundColor: 'transparent', // remove background
+                    height: 100,
+                    width: 100,
+                    backgroundColor: "transparent",
                 }}
             />
 

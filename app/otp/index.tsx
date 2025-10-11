@@ -1,109 +1,50 @@
+import { useState } from "react";
+import { View, StyleSheet, Text } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { usePhoneAuth } from "./usePhoneAuth";
 import OtpField from "@/components/auth/otp/otpField";
 import PageTitle from "@/components/auth/pageTitle";
 import ButtonMain from "@/components/common/buttonMain";
 import { COLORS } from "@/constants/colors";
-import ServerHttpRequest from "@/services/axios_request.mjs";
-import { useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-import { View, StatusBar, StyleSheet, Text, Pressable } from "react-native";
-
-import { OtpInput } from 'react-native-otp-entry'
-
-// TODO: Create a page template component
-
-// TODO: Fix proportions of this page
 
 export default function Otp() {
-    const { credential, credentialType } = useLocalSearchParams()
+    const router = useRouter();
+    const { verificationId } = useLocalSearchParams();
+    const { verifyOTP } = usePhoneAuth();
+    const [enteredCode, setEnteredCode] = useState("");
+    const [message, setMessage] = useState("");
 
-    const [enteredCode, setEnteredCode] = useState('')
-
-    async function SendCodeCheckRequest() {
-        let OTPcheckData = {
-            code: enteredCode,
-            credential: credential,
-            credentialType: credentialType
+    async function handleVerify() {
+        console.log(verificationId)
+        if (!verificationId) {
+            setMessage("No verification ID available. Retry sending OTP.");
+            return;
         }
-        let codeValid = await ServerHttpRequest('post', '/checkOTP',)
+        const success = await verifyOTP(enteredCode, verificationId);
+        if (!success) {
+            setMessage("Invalid OTP. Try again.");
+            return;
+        }
+
+        router.replace("/(tabs)");
     }
 
     return (
         <View style={[StyleSheet.absoluteFill, styles.pageContainer]}>
-            <StatusBar hidden />
+            <PageTitle title="OTP Verification" />
+            <OtpField setEnteredCode={setEnteredCode} />
 
-            <View style={styles.cardContainer}>
-                <View style={styles.topContainer}>
-                    <PageTitle title="OTP Verification" />
-
-
-                    <View style={styles.instructionTextContainer}>
-                        <Text style={styles.instructionText}>
-                            Enter the code we just sent to your number ********98
-                        </Text>
-                    </View>
-
-
-
-                    <OtpField setEnteredCode={setEnteredCode} />
-                </View>
-
-                <View style={styles.bottomContainer}>
-                    <View style={styles.resendCodeContainer}>
-
-                        <Text>Didn't recive code? </Text><Pressable hitSlop={15} onPress={() => { alert('resent code') }}><Text style={styles.resendCodeText}>Resend</Text></Pressable>
-
-                    </View>
-                    <ButtonMain label='Verify' onPress={SendCodeCheckRequest} />
-                </View>
-            </View>
+            <ButtonMain label="Verify" onPress={handleVerify} />
+            {message ? <Text>{message}</Text> : null}
         </View>
-    )
+    );
 }
-
 
 const styles = StyleSheet.create({
     pageContainer: {
         backgroundColor: COLORS.backgroundPrimary,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
     },
-    cardContainer: {
-        backgroundColor: COLORS.backgroundSurface,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderColor: COLORS.textPrimary,
-        borderWidth: 1,
-        borderRadius: 20,
-        height: '65%'
-    },
-    topContainer: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        paddingTop: '20%'
-    },
-    bottomContainer: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        paddingBottom: '10%'
-    },
-    instructionTextContainer: {
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        width: '70%'
-    },
-    instructionText: {
-        color: COLORS.textSecondry,
-        textAlign: 'right',
-        width: 190,
-    },
-    resendCodeContainer: {
-        // marginTop: 200
-        flexDirection: 'row-reverse',
-    },
-    resendCodeText: {
-        color: COLORS.accentPrimary,
-        textDecorationLine: 'underline'
-    }
 });
