@@ -2,27 +2,56 @@ import ButtonMain from "@/components/common/buttonMain";
 import PageTitle from "@/components/auth/pageTitle";
 import TextField from "@/components/common/textField";
 import { COLORS } from "@/constants/colors";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
+import { useFormField } from "@/hooks/useFormField";
+import { registerUser } from "@/services/firebase/firestore";
+
+// phone
+// nickname
+// gender - male / female / other
+// profile type - regular / coach
+
+// date of birth - optional
+// profile picture - optional
+// bio - optional
+
+function isNicknameValid(nickname: string) {
+    const regex = /^[a-zA-Z0-9_]{3,30}$/;
+
+    if (nickname.length == 0) {
+        return { valid: false, message: "Nickname cannot be empty" };
+    }
+
+    if (!regex.test(nickname)) {
+        return { valid: false, message: "Invalid nickname" };
+    }
+
+    return { valid: true }
+}
+
 
 
 export default function Register() {
-    const [email, setEmail] = useState('')
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+    const nicknameField = useFormField<string>("", isNicknameValid);
 
+    const params = useLocalSearchParams();
+    const userId = params.userId;
+
+    function CreateNewUser() {
+        registerUser(userId)
+        router.push("/(tabs)")
+    }
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
             <StatusBar hidden />
 
             <PageTitle title="Register" />
 
-            <TextField placeholder="Email" value={email} onChangeText={input => setEmail(input)} />
-            <TextField placeholder="Username" value={username} onChangeText={input => setUsername(input)} />
-            <TextField placeholder="Password" value={password} onChangeText={input => setPassword(input)} />
+            <TextField placeholder="Nickname" value={nicknameField.value} onChangeText={input => nicknameField.setValue(input)} />
 
-            <ButtonMain label="Next step" onPress={() => router.push('/register/register_optional')} />
+            <ButtonMain label="Done" onPress={CreateNewUser} />
         </View>
     )
 }

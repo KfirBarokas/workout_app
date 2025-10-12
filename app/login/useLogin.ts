@@ -3,15 +3,26 @@ import { useState } from "react";
 import { INVALID_CREDENTIAL_MESSAGES } from "@/constants/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
-import { auth } from "@/services/firebase/firebase";
-import { usePhoneAuth } from "../otp/usePhoneAuth";
+import { auth } from "@/services/firebase/auth";
+import { useOTP } from "../otp/useOTP";
+import { useFormField } from "@/hooks/useFormField";
 
 // Helper functions
 function normalizePhone(phone: string) {
     return phone.replace(/[\s()-]/g, "");
 }
 function isPhoneNumberValid(phone: string) {
-    return /^05\d{8}$/.test(phone);
+    let normalized = normalizePhone(phone)
+
+    if (!normalized) {
+        return { valid: false, message: INVALID_CREDENTIAL_MESSAGES.empty };
+    }
+
+    if (!/^05\d{8}$/.test(normalized)) {
+        return { valid: false, message: INVALID_CREDENTIAL_MESSAGES.notPhoneNumber };
+    }
+
+    return { valid: true, message: "" };
 }
 function toE164(phone: string) {
     const normalized = normalizePhone(phone);
@@ -25,39 +36,29 @@ function formatPhoneNumber(phone: string) {
     return digits.slice(0, 3) + "-" + digits.slice(3, 10);
 }
 
-// Hook
+
 export function useLogin() {
     const router = useRouter();
-    const { recaptchaVerifierRef, sendOTP } = usePhoneAuth();
+    const { recaptchaVerifierRef, sendOTP } = useOTP();
 
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [invalidPhoneNumberMessage, setInvalidPhoneNumberMessage] = useState(
-        INVALID_CREDENTIAL_MESSAGES.noMessage
-    );
+    const phoneNumberField = useFormField<string>("", isPhoneNumberValid)
 
     function handlePhoneInput(input: string) {
-        setPhoneNumber(formatPhoneNumber(input));
-    }
-
-    function showInvalidPhoneNumberModal(message: string) {
-        setInvalidPhoneNumberMessage(message);
+        phoneNumberField.setValue(formatPhoneNumber(input));
     }
 
     async function loginUser() {
-        const normalizedPhoneNumber = normalizePhone(phoneNumber);
-        if (!isPhoneNumberValid(normalizedPhoneNumber)) {
-            showInvalidPhoneNumberModal(INVALID_CREDENTIAL_MESSAGES.notPhoneNumber);
+        if (!phoneNumberField.validate()) {
             return;
         }
 
-        const e164PhoneNumber = toE164(normalizedPhoneNumber);
+        const e164PhoneNumber = toE164(phoneNumberField.value);
 
         try {
             const verificationId = await sendOTP(e164PhoneNumber);
-            router.push({ pathname: "/otp", params: { verificationId } }); // pass verificationId
+            router.replace({ pathname: "/otp", params: { verificationId } }); // pass verificationId
         } catch (err: any) {
             console.error("Login error:", err.message);
-            showInvalidPhoneNumberModal("Failed to send OTP. Try again.");
         }
     }
 
@@ -78,10 +79,9 @@ export function useLogin() {
     }
 
     return {
-        phoneNumber,
-        setPhoneNumber: handlePhoneInput,
-        invalidPhoneNumberMessage,
+        phoneNumberField,
         loginUser,
+        handlePhoneInput,
         signInWithGoogle,
         recaptchaVerifierRef,
     };

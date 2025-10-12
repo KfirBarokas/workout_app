@@ -1,14 +1,3 @@
-In the postgres config file add listen_address with the localhost and stuff
-https://wiki.archlinux.org/title/PostgreSQL
-
-Connect node and postgres 
-https://node-postgres.com/features/connecting
-
-to view a database:
-1. switch to postgres user: sudo su postgres 
-2. enter the database: psql -d workoutDB
-
-
 remove .env and other secret stuff from github
 
 
@@ -19,4 +8,10 @@ user:
     country
     profile_picture
 
+
+implement Firebase Auth state or AsyncStorage to track if the user is logged in
+
+create new user in firestore if not existing
+
+centralize validators
 

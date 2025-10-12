@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { PhoneAuthProvider, signInWithCredential } from "firebase/auth";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
-import { auth } from "@/services/firebase/firebase";
+import { auth } from "@/services/firebase/auth";
 
-export function usePhoneAuth() {
+export function useOTP() {
     const recaptchaVerifierRef = useRef<FirebaseRecaptchaVerifierModal>(null);
     const [loading, setLoading] = useState(false);
 
@@ -26,13 +26,16 @@ export function usePhoneAuth() {
         if (!verificationId) throw new Error("No verificationId");
         try {
             const credential = PhoneAuthProvider.credential(verificationId, code);
-            await signInWithCredential(auth, credential);
-            return true;
+            let userCredential = await signInWithCredential(auth, credential);
+            let userId = userCredential.user.uid;
+
+            return { valid: true, userId: userId };
         } catch (err) {
             console.error("OTP verification failed:", err);
-            return false;
+            return { valid: false };
         }
     }
+
 
     return {
         recaptchaVerifierRef,

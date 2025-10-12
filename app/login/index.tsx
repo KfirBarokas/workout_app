@@ -5,13 +5,12 @@ import PageTitle from "@/components/auth/loginRegister/pageTitle";
 import PhoneNumberTextField from "@/components/auth/loginRegister/phoneNumberTextField";
 import ButtonMain from "@/components/common/buttonMain";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
-import { auth } from "@/services/firebase/firebase";
+import { auth } from "@/services/firebase/auth";
 
 export default function Login() {
     const {
-        phoneNumber,
-        setPhoneNumber,
-        invalidPhoneNumberMessage,
+        phoneNumberField,
+        handlePhoneInput,
         loginUser,
         signInWithGoogle,
         recaptchaVerifierRef,
@@ -24,10 +23,10 @@ export default function Login() {
             <PageTitle title="Login" />
 
             <PhoneNumberTextField
-                value={phoneNumber}
+                value={phoneNumberField.value}
                 placeholder="Phone number"
-                onChangeText={(input) => setPhoneNumber(input)}
-                invalidPhoneNumberMessage={invalidPhoneNumberMessage}
+                onChangeText={(input) => handlePhoneInput(input)}
+                invalidPhoneNumberMessage={phoneNumberField.error}
             />
 
             <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -44,7 +43,7 @@ export default function Login() {
             <FirebaseRecaptchaVerifierModal
                 ref={recaptchaVerifierRef}
                 firebaseConfig={auth.app.options}
-                attemptInvisibleVerification={false} // use true if invisible works
+                attemptInvisibleVerification={true} // use true if invisible works
                 style={{
                     flex: 0,
                     height: 100,
