@@ -14,14 +14,7 @@ export async function isUserExists(uid: string): Promise<boolean> {
 }
 
 
-// phone
-// nickname
-// gender - male / female / other
-// profile type - regular / coach
 
-// date of birth - optional
-// profile picture - optional
-// bio - optional
 
 export async function registerUser(authUserId: string, phoneNumber: string, nickname: string, profileType: string, gender: string, birthDate: string, bio: string, profilePicture: string) {
 
