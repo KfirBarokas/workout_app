@@ -4,7 +4,6 @@ import { useLogin } from "./useLogin";
 import PageTitle from "@/components/auth/loginRegister/pageTitle";
 import PhoneNumberTextField from "@/components/auth/loginRegister/phoneNumberTextField";
 import ButtonMain from "@/components/common/buttonMain";
-import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { auth } from "@/services/firebase/auth";
 
 export default function Login() {
@@ -13,7 +12,7 @@ export default function Login() {
         handlePhoneInput,
         loginUser,
         signInWithGoogle,
-        recaptchaVerifierRef,
+        skipToRegister
     } = useLogin();
 
     return (
@@ -39,20 +38,9 @@ export default function Login() {
                 </Pressable>
             </Link>
 
-            {/* Single reCAPTCHA modal */}
-            <FirebaseRecaptchaVerifierModal
-                ref={recaptchaVerifierRef}
-                firebaseConfig={auth.app.options}
-                attemptInvisibleVerification={true} // use true if invisible works
-                style={{
-                    flex: 0,
-                    height: 100,
-                    width: 100,
-                    backgroundColor: "transparent",
-                }}
-            />
-
             <ButtonMain label="Login" onPress={loginUser} />
+
+            <ButtonMain label="skip to register" onPress={skipToRegister} />
         </View>
     );
 }

@@ -39,7 +39,7 @@ function formatPhoneNumber(phone: string) {
 
 export function useLogin() {
     const router = useRouter();
-    const { recaptchaVerifierRef, sendOTP } = useOTP();
+    const { sendOTP } = useOTP();
 
     const phoneNumberField = useFormField<string>("", isPhoneNumberValid)
 
@@ -56,7 +56,7 @@ export function useLogin() {
 
         try {
             const verificationId = await sendOTP(e164PhoneNumber);
-            router.replace({ pathname: "/otp", params: { verificationId } }); // pass verificationId
+            router.replace({ pathname: "/otp", params: { verificationId, phoneNumber: e164PhoneNumber } }); // pass verificationId
         } catch (err: any) {
             console.error("Login error:", err.message);
         }
@@ -78,11 +78,15 @@ export function useLogin() {
         }
     }
 
+    function skipToRegister() {
+        router.push("/register")
+    }
+
     return {
         phoneNumberField,
         loginUser,
         handlePhoneInput,
         signInWithGoogle,
-        recaptchaVerifierRef,
+        skipToRegister
     };
 }

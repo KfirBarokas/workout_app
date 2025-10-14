@@ -2,16 +2,15 @@ import { useState } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useOTP } from "./useOTP";
 import { isUserExists } from "@/services/firebase/firestore";
+import { auth } from "@/services/firebase/auth";
 
 export function useOtpScreen() {
     const router = useRouter();
-    const { recaptchaVerifierRef, verifyOTP } = useOTP();
+    const { verifyOTP } = useOTP();
 
     const params = useLocalSearchParams();
-    const rawVerificationId = params.verificationId;
-    const verificationId = Array.isArray(rawVerificationId)
-        ? rawVerificationId[0]
-        : rawVerificationId;
+    const rawPhone = params.phoneNumber;
+    const phoneNumber = Array.isArray(rawPhone) ? rawPhone[0] : rawPhone;
 
     const [enteredCode, setEnteredCode] = useState("");
     const [message, setMessage] = useState("");
@@ -20,44 +19,39 @@ export function useOtpScreen() {
     async function handleVerify() {
         setLoading(true);
         try {
-            if (!verificationId) {
-                setMessage("No verification ID available. Retry sending OTP.");
-                return;
-            }
-
             setMessage(""); // reset previous messages
 
-            const { valid, userId } = await verifyOTP(enteredCode, verificationId);
+            const { valid } = await verifyOTP(enteredCode);
 
-            if (!valid || !userId) {
+            if (!valid) {
                 setMessage("Invalid OTP. Try again.");
                 return;
             }
 
-            let userExists = await isUserExists(userId)
+            const user = auth.currentUser;
+            if (!user) throw new Error("User not found after OTP verification");
+
+            const userExists = await isUserExists(user.uid);
 
             if (!userExists) {
-                router.replace({ pathname: "/register", params: { userId } });
+                router.replace({ pathname: "/register", params: { userId: user.uid, phoneNumber } });
                 return;
             }
 
             router.replace("/(tabs)");
-        }
-        catch (err) {
-            console.error(err)
-            return;
-        }
-        finally {
-            setLoading(false)
+        } catch (err) {
+            console.error(err);
+            setMessage("Something went wrong. Try again.");
+        } finally {
+            setLoading(false);
         }
     }
 
     return {
-        recaptchaVerifierRef,
         enteredCode,
         setEnteredCode,
         message,
         handleVerify,
-        loading
+        loading,
     };
 }

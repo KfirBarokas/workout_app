@@ -1,44 +1,43 @@
-import { useRef, useState } from "react";
-import { PhoneAuthProvider, signInWithCredential } from "firebase/auth";
-import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
-import { auth } from "@/services/firebase/auth";
+import { useState, useEffect } from "react";
+import { getAuth, onAuthStateChanged, signInWithPhoneNumber } from "@react-native-firebase/auth";
 
 export function useOTP() {
-    const recaptchaVerifierRef = useRef<FirebaseRecaptchaVerifierModal>(null);
     const [loading, setLoading] = useState(false);
+    const [confirm, setConfirm] = useState<any>(null);
+
+    // Optional: automatically handle auth state
+    useEffect(() => {
+        const subscriber = onAuthStateChanged(getAuth(), (user) => {
+            if (user) {
+                console.log("User logged in automatically:", user.uid);
+            }
+        });
+        return subscriber; // unsubscribe on unmount
+    }, []);
 
     async function sendOTP(phoneNumber: string) {
-        if (!recaptchaVerifierRef.current) throw new Error("Recaptcha not ready");
+        setLoading(true);
         try {
-            setLoading(true);
-            const provider = new PhoneAuthProvider(auth);
-            const verificationId = await provider.verifyPhoneNumber(
-                phoneNumber,
-                recaptchaVerifierRef.current
-            );
-            return verificationId;
+            const confirmation = await signInWithPhoneNumber(getAuth(), phoneNumber);
+            setConfirm(confirmation);
+            return confirmation;
         } finally {
             setLoading(false);
         }
     }
 
-    async function verifyOTP(code: string, verificationId: string) {
-        if (!verificationId) throw new Error("No verificationId");
+    async function verifyOTP(code: string) {
+        if (!confirm) throw new Error("No confirmation object. Send OTP first.");
         try {
-            const credential = PhoneAuthProvider.credential(verificationId, code);
-            let userCredential = await signInWithCredential(auth, credential);
-            let userId = userCredential.user.uid;
-
-            return { valid: true, userId: userId };
+            await confirm.confirm(code);
+            return { valid: true };
         } catch (err) {
-            console.error("OTP verification failed:", err);
+            console.error("Invalid code:", err);
             return { valid: false };
         }
     }
 
-
     return {
-        recaptchaVerifierRef,
         sendOTP,
         verifyOTP,
         loading,

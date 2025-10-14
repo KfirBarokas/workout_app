@@ -7,7 +7,9 @@ import { useState } from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
 import { useFormField } from "@/hooks/useFormField";
 import { registerUser } from "@/services/firebase/firestore";
-
+import ProfileTypeSelector from "@/components/auth/register/profileTypeSelector";
+import GenderDropdown from "@/components/auth/register/genderDropdown";
+import DatePicker from "@/components/common/datePicker"
 // phone
 // nickname
 // gender - male / female / other
@@ -35,14 +37,19 @@ function isNicknameValid(nickname: string) {
 
 export default function Register() {
     const nicknameField = useFormField<string>("", isNicknameValid);
+    const [profileType, setProfileType] = useState("regular")
+    const [gender, setGender] = useState("male");
+    const [birthDate, setBirthDate] = useState<Date | null>(null);
 
     const params = useLocalSearchParams();
-    const userId = params.userId;
+    const userId = params.userId as string;
+    const phoneNumber = params.phoneNumber as string;
 
     function CreateNewUser() {
-        registerUser(userId)
+        registerUser(userId, phoneNumber, nicknameField.value,)
         router.push("/(tabs)")
     }
+
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
             <StatusBar hidden />
@@ -50,6 +57,12 @@ export default function Register() {
             <PageTitle title="Register" />
 
             <TextField placeholder="Nickname" value={nicknameField.value} onChangeText={input => nicknameField.setValue(input)} />
+
+            <ProfileTypeSelector value={profileType} onChange={setProfileType} />
+
+            <GenderDropdown value={gender} onChange={setGender} />
+
+            <DatePicker date={birthDate} onChange={setBirthDate} />
 
             <ButtonMain label="Done" onPress={CreateNewUser} />
         </View>

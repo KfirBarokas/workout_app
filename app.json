@@ -13,7 +13,7 @@
             "bundleIdentifier": "com.anonymous.workout"
         },
         "android": {
-            "googleServicesFile": "android/app/google-services.json",
+            "googleServicesFile": "./google-services.json",
             "adaptiveIcon": {
                 "foregroundImage": "",
                 "backgroundColor": "#ffffff"
@@ -29,6 +29,10 @@
             "favicon": ""
         },
         "plugins": [
+            [
+                "@react-native-firebase/app",
+                "@react-native-firebase/auth"
+            ],
             [
                 "@react-native-google-signin/google-signin"
             ],
@@ -52,10 +56,15 @@
                 "expo-build-properties",
                 {
                     "android": {
-                        "kotlinVersion": "1.9.25"
+                        "kotlinVersion": "2.0.21",
+                        "compileSdkVersion": 35,
+                        "targetSdkVersion": 35,
+                        "minSdkVersion": 24
                     }
                 }
-            ]
+            ],
+            "expo-font",
+            "expo-web-browser"
         ],
         "experiments": {
             "typedRoutes": true
