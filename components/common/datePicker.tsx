@@ -21,8 +21,7 @@ export default function DatePickerModal({ date, onChange, label }: DatePickerMod
     const defaultStyles = useDefaultStyles();
     const customStyles = {
         ...defaultStyles,
-        // text: { ...defaultStyles.tex, color: "black" }, // general text
-        dayText: { ...defaultStyles.day, color: "black" }, // specifically the day numbers
+        today: { borderColor: "black" }, // specifically the day numbers
     };
     return (
         <View style={styles.container}>
@@ -45,13 +44,31 @@ export default function DatePickerModal({ date, onChange, label }: DatePickerMod
                         <DateTimePicker
                             mode="single"
                             date={date || new Date()}
-                            display={Platform.OS === "ios" ? "spinner" : "default"}
+                            // display={Platform.OS === "ios" ? "spinner" : "default"}
                             onChange={({ date: selectedDate }) => {
                                 if (selectedDate) onChange(selectedDate);
                                 // setModalVisible(false);
                             }}
-                            styles={{ ...customStyles }}
-                            textColor="black"
+                            showOutsideDays={true}
+                            // TODO: Seperate styles into variable
+                            styles={{
+                                ...defaultStyles,
+                                // today: { borderColor: 'blue', borderWidth: 1 }, // Add a border to today's date
+                                selected: { backgroundColor: 'red' }, // Highlight the selected day
+                                selected_label: { color: 'white' }, // Highlight the selected day label
+                                day_label: { color: 'black' },
+                                month_label: { color: 'black' },
+
+                                month_selector_label: { color: 'black', fontWeight: "600" },
+                                month_selector: { backgroundColor: 'orange', borderRadius: 6, paddingHorizontal: 10, paddingVertical: 5 },
+
+                                year_selector_label: { color: 'black', fontWeight: "600" },
+                                year_selector: { backgroundColor: 'orange', borderRadius: 6, paddingHorizontal: 10, paddingVertical: 5 },
+
+                                year_label: { color: 'black' },
+                                button_next_image: { tintColor: 'black', transform: [{ scaleX: 1 }] },
+                                button_prev_image: { tintColor: 'black', transform: [{ scaleX: 1 }] },
+                            }}
                         />
 
                         <Pressable
