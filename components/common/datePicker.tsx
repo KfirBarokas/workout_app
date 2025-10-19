@@ -16,12 +16,31 @@ interface DatePickerModalProps {
     label?: string; // optional label above button
 }
 
+
+const pickerStyles = {
+    // today: { borderColor: 'blue', borderWidth: 1 }, // Add a border to today's date
+    selected: { backgroundColor: 'red' }, // Highlight the selected day
+    selected_label: { color: 'white' }, // Highlight the selected day label
+    day_label: { color: 'black' },
+    month_label: { color: 'black' },
+
+    month_selector_label: { color: 'black', fontWeight: "600" },
+    month_selector: { backgroundColor: 'orange', borderRadius: 6, paddingHorizontal: 10, paddingVertical: 5 },
+
+    year_selector_label: { color: 'black', fontWeight: "600" },
+    year_selector: { backgroundColor: 'orange', borderRadius: 6, paddingHorizontal: 10, paddingVertical: 5 },
+
+    year_label: { color: 'black' },
+    button_next_image: { tintColor: 'black', transform: [{ scaleX: 1 }] },
+    button_prev_image: { tintColor: 'black', transform: [{ scaleX: 1 }] },
+}
+
 export default function DatePickerModal({ date, onChange, label }: DatePickerModalProps) {
     const [modalVisible, setModalVisible] = useState(false);
     const defaultStyles = useDefaultStyles();
     const customStyles = {
         ...defaultStyles,
-        today: { borderColor: "black" }, // specifically the day numbers
+        ...pickerStyles,
     };
     return (
         <View style={styles.container}>
@@ -50,25 +69,7 @@ export default function DatePickerModal({ date, onChange, label }: DatePickerMod
                                 // setModalVisible(false);
                             }}
                             showOutsideDays={true}
-                            // TODO: Seperate styles into variable
-                            styles={{
-                                ...defaultStyles,
-                                // today: { borderColor: 'blue', borderWidth: 1 }, // Add a border to today's date
-                                selected: { backgroundColor: 'red' }, // Highlight the selected day
-                                selected_label: { color: 'white' }, // Highlight the selected day label
-                                day_label: { color: 'black' },
-                                month_label: { color: 'black' },
-
-                                month_selector_label: { color: 'black', fontWeight: "600" },
-                                month_selector: { backgroundColor: 'orange', borderRadius: 6, paddingHorizontal: 10, paddingVertical: 5 },
-
-                                year_selector_label: { color: 'black', fontWeight: "600" },
-                                year_selector: { backgroundColor: 'orange', borderRadius: 6, paddingHorizontal: 10, paddingVertical: 5 },
-
-                                year_label: { color: 'black' },
-                                button_next_image: { tintColor: 'black', transform: [{ scaleX: 1 }] },
-                                button_prev_image: { tintColor: 'black', transform: [{ scaleX: 1 }] },
-                            }}
+                            styles={customStyles}
                         />
 
                         <Pressable

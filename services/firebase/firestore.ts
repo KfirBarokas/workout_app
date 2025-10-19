@@ -1,3 +1,4 @@
+import { BirthDate, ImageUri } from "@/constants/registration";
 import { auth, db } from "./auth";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -16,13 +17,13 @@ export async function isUserExists(uid: string): Promise<boolean> {
 
 
 
-export async function registerUser(authUserId: string, phoneNumber: string, nickname: string, profileType: string, gender: string, birthDate: string, bio: string, profilePicture: string) {
+export async function registerUser(authUserId: string, phoneNumber: string, nickname: string, profileType: string, gender: string, birthDate: BirthDate, bio: string, profilePicture: ImageUri) {
 
-    await setDoc(doc(db, "users", uid), {
+    await setDoc(doc(db, "users", authUserId), {
         displayName,
         email,
         createdAt: new Date(),
     });
 
-    return uid;
+    return authUserId;
 }

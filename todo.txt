@@ -1,17 +1,5 @@
 remove .env and other secret stuff from github
 
-
-user:
-    email
-    phone_number
-    username
-    country
-    profile_picture
-
-
 implement Firebase Auth state or AsyncStorage to track if the user is logged in
 
 create new user in firestore if not existing
-
-centralize validators
-

@@ -3,7 +3,7 @@ import PageTitle from "@/components/auth/pageTitle";
 import TextField from "@/components/common/textField";
 import { COLORS } from "@/constants/colors";
 import { router, useLocalSearchParams } from "expo-router";
-import { StatusBar, StyleSheet, View } from "react-native";
+import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import { useFormField } from "@/hooks/useFormField";
 import { registerUser } from "@/services/firebase/firestore";
 import ProfileTypeSelector from "@/components/auth/register/profileTypeSelector";
@@ -12,9 +12,8 @@ import DatePicker from "@/components/common/datePicker"
 import BioInput from "@/components/auth/register/bioInput";
 import ProfilePicturePicker from "@/components/auth/register/profilePicturePicker";
 import { PROFILE_TYPES, GENDER_OPTIONS, BirthDate, Bio, ImageUri } from "@/constants/registration";
-import { isNicknameValid, isBirthDateValid, isBioValid, isImageUriValid } from "@/utils/validation/registation";
-
-// Validation functions (you can move these to a separate utils file)
+import { isNicknameValid, isBirthDateValid, isBioValid, isImageUriValid } from "@/utils/validation";
+import InputLabel from "@/components/auth/register/inputLabel";
 
 
 export default function Register() {
@@ -30,49 +29,67 @@ export default function Register() {
     const phoneNumber = params.phoneNumber as string;
 
     function CreateNewUser() {
-        registerUser(userId, phoneNumber, nicknameField.value);
+        // TODO: Add: check if all inputs are valid then proceed
+        registerUser(userId, phoneNumber, nicknameField.value, profileTypeField.value, genderField.value, birthDateField.value, bioField.value, imageUriField.value);
         router.push("/(tabs)");
     }
 
     return (
         <View style={[StyleSheet.absoluteFill, styles.mainContainer]}>
             <StatusBar hidden />
-            <PageTitle title="Register" />
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <View style={styles.backButtonContainer}>
+                    {/* Add back button component here */}
+                </View>
 
-            <TextField
-                placeholder="Nickname"
-                value={nicknameField.value}
-                onChangeText={nicknameField.setValue}
-            />
+                <View style={styles.contentContainer}>
+                    <PageTitle title="Create Your Account" />
 
-            <ProfileTypeSelector
-                value={profileTypeField.value}
-                onChange={profileTypeField.setValue}
-            />
+                    <ProfilePicturePicker
+                        imageUri={imageUriField.value}
+                        setImageUri={imageUriField.setValue}
+                    />
 
-            <GenderDropdown
-                value={genderField.value}
-                onChange={genderField.setValue}
-            />
+                    <View style={styles.formContainer}>
+                        <InputLabel text="Nickname" />
+                        <TextField
+                            placeholder="Enter your nickname"
+                            value={nicknameField.value}
+                            onChangeText={nicknameField.setValue}
+                        />
 
-            <DatePicker
-                date={birthDateField.value}
-                onChange={birthDateField.setValue}
-            />
+                        <InputLabel text="Gender" />
+                        <GenderDropdown
+                            value={genderField.value}
+                            onChange={genderField.setValue}
+                        />
 
-            <BioInput
-                bio={bioField.value}
-                setBio={bioField.setValue}
-                error={bioField.error}
-                setError={() => { }} // Remove this prop if not needed
-            />
+                        <InputLabel text="Profile Type" />
+                        <ProfileTypeSelector
+                            value={profileTypeField.value}
+                            onChange={profileTypeField.setValue}
+                        />
 
-            <ProfilePicturePicker
-                imageUri={imageUriField.value}
-                setImageUri={imageUriField.setValue}
-            />
+                        <InputLabel text="Date of birth (optional)" />
+                        <DatePicker
+                            date={birthDateField.value}
+                            onChange={birthDateField.setValue}
+                        />
 
-            <ButtonMain label="Done" onPress={CreateNewUser} />
+                        <InputLabel text="Bio (optional)" />
+                        <BioInput
+                            bio={bioField.value}
+                            setBio={bioField.setValue}
+                            error={bioField.error}
+                        />
+                    </View>
+
+                    <ButtonMain
+                        label="Create Account"
+                        onPress={CreateNewUser}
+                    />
+                </View>
+            </ScrollView>
         </View>
     );
 }
@@ -80,8 +97,39 @@ export default function Register() {
 const styles = StyleSheet.create({
     mainContainer: {
         backgroundColor: COLORS.backgroundPrimary,
-        flexDirection: 'column',
-        justifyContent: 'center',
+        flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
+    },
+    backButtonContainer: {
+        position: 'absolute',
+        top: 40,
+        left: 16,
+        zIndex: 1,
+    },
+    contentContainer: {
+        flex: 1,
+        paddingHorizontal: 16,
+        paddingTop: 60,
         alignItems: 'center',
     },
-})
+    profilePicker: {
+        marginTop: 24,
+        marginBottom: 32,
+    },
+    formContainer: {
+        width: '100%',
+        paddingHorizontal: 16,
+        flexDirection: 'column',
+        alignItems: 'flex-end'
+    },
+    inputSpacing: {
+        marginTop: 16,
+    },
+    createButton: {
+        marginTop: 32,
+        marginBottom: 24,
+        width: '90%',
+    }
+});

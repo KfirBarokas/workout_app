@@ -10,28 +10,25 @@ interface BioInputProps {
     bio: string;
     setBio: (bio: string) => void;
     error: string;
-    setError: (error: string) => void;
 }
 
-export default function BioInput({ bio, setBio, error, setError }: BioInputProps) {
-    const handleChange = (text: string) => {
-        // Block control or invalid characters, allow emojis and normal symbols
-        if (!SAFE_INPUT_REGEX.test(text)) {
-            setError("Some characters are not supported.");
-            return;
-        }
+export default function BioInput({ bio, setBio, error }: BioInputProps) {
+    // const handleChange = (text: string) => {
+    //     // Block control or invalid characters, allow emojis and normal symbols
+    //     if (!SAFE_INPUT_REGEX.test(text)) {
+    //         setError("Some characters are not supported.");
+    //         return;
+    //     }
 
-        setError("");
-        setBio(text);
-    };
+    //     setBio(text);
+    // };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>Your Bio</Text>
             <TextInput
                 style={[styles.input, error && styles.inputError]}
                 value={bio}
-                onChangeText={handleChange}
+                onChangeText={(text) => setBio(text)}
                 placeholder="Tell us a bit about yourself 😊"
                 multiline
                 maxLength={MAX_LENGTH}
@@ -41,7 +38,7 @@ export default function BioInput({ bio, setBio, error, setError }: BioInputProps
 }
 
 const styles = StyleSheet.create({
-    container: { margin: 16 },
+    container: { marginVertical: 10 },
     label: { fontSize: 16, color: "black", marginBottom: 6 },
     input: {
         borderWidth: 1,

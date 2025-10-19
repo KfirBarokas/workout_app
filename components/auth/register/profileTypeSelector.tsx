@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         direction: "rtl",
         gap: 10,
-        marginVertical: 20,
+        marginVertical: 10,
     },
     option: {
         flex: 1,

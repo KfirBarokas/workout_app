@@ -1,9 +1,11 @@
-import { StyleSheet, TextInput } from "react-native"
+import { StyleProp, StyleSheet, TextInput, ViewStyle } from "react-native"
 
 interface TextFieldProps {
-    value: string,
-    onChangeText: (input: string) => void,
-    placeholder: string,
+    label?: string;
+    placeholder: string;
+    value: string;
+    onChangeText: (text: string) => void;
+    // style?: StyleProp<ViewStyle>;
     keyboardType?: "default" | "numeric" | "email-address" | "phone-pad"
 }
 
@@ -16,13 +18,13 @@ export default function TextField({ value, onChangeText, placeholder, keyboardTy
 const styles = StyleSheet.create({
     input: {
         height: 50,
-        margin: 12,
-        // lineHeight:40,
+        marginVertical: 10,
+        // lineHeight: 40,
         padding: 10,
         paddingHorizontal: 20,
         fontSize: 18,
         width: 250,
         backgroundColor: 'white',
-        borderRadius: 30
+        borderRadius: 10
     },
 })
