@@ -9,3 +9,8 @@ export const INVALID_CREDENTIAL_MESSAGES = {
     empty: 'Field cannot be empty',
     notPhoneNumber: 'Must be phone number'
 }
+
+export interface ValidationResult {
+    valid: boolean;
+    message?: string;
+}

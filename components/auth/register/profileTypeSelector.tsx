@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { COLORS } from "@/constants/colors";
+import { PROFILE_TYPES } from "@/constants/registration";
 
-export default function ProfileTypeSelector({ value, onChange }: { value: string, onChange: (val: string) => void }) {
+interface ProfileTypeSelectorProps {
+    value: PROFILE_TYPES,
+    onChange: (value: PROFILE_TYPES) => void
+}
+
+const PROFILE_TYPE_OPTIONS: PROFILE_TYPES[] = ["regular", "coach"];
+
+export default function ProfileTypeSelector({ value, onChange }: ProfileTypeSelectorProps) {
     return (
         <View style={styles.container}>
-            {["regular", "coach"].map((type) => (
+            {PROFILE_TYPE_OPTIONS.map((type) => (
                 <Pressable
                     key={type}
                     style={[
@@ -29,6 +37,7 @@ export default function ProfileTypeSelector({ value, onChange }: { value: string
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
+        direction: "rtl",
         gap: 10,
         marginVertical: 20,
     },

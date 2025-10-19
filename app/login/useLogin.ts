@@ -1,41 +1,13 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { INVALID_CREDENTIAL_MESSAGES } from "@/constants/auth";
+import { INVALID_CREDENTIAL_MESSAGES, ValidationResult } from "@/constants/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 import { auth } from "@/services/firebase/auth";
 import { useOTP } from "../otp/useOTP";
 import { useFormField } from "@/hooks/useFormField";
-
-// Helper functions
-function normalizePhone(phone: string) {
-    return phone.replace(/[\s()-]/g, "");
-}
-function isPhoneNumberValid(phone: string) {
-    let normalized = normalizePhone(phone)
-
-    if (!normalized) {
-        return { valid: false, message: INVALID_CREDENTIAL_MESSAGES.empty };
-    }
-
-    if (!/^05\d{8}$/.test(normalized)) {
-        return { valid: false, message: INVALID_CREDENTIAL_MESSAGES.notPhoneNumber };
-    }
-
-    return { valid: true, message: "" };
-}
-function toE164(phone: string) {
-    const normalized = normalizePhone(phone);
-    if (normalized.startsWith("0")) return "+972" + normalized.slice(1);
-    return normalized;
-}
-function formatPhoneNumber(phone: string) {
-    const digits = phone.replace(/\D/g, "");
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 10) return digits.slice(0, 3) + "-" + digits.slice(3);
-    return digits.slice(0, 3) + "-" + digits.slice(3, 10);
-}
-
+import { formatPhoneNumber, toE164 } from "@/utils/format";
+import { isPhoneNumberValid } from "@/utils/validation";
 
 export function useLogin() {
     const router = useRouter();

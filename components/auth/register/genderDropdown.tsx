@@ -2,23 +2,24 @@ import { useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View, FlatList } from "react-native";
 import { COLORS } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
+import { GENDER_OPTIONS } from "@/constants/registration";
 
-const OPTIONS = [
+interface GenderDropdownProps {
+    value: GENDER_OPTIONS;
+    onChange: (val: GENDER_OPTIONS) => void;
+}
+
+const GENDER_OPTIONS_DROPDOWN: { label: string; value: GENDER_OPTIONS }[] = [
     { label: "Male", value: "male" },
     { label: "Female", value: "female" },
     { label: "Other", value: "other" },
 ];
 
-interface GenderDropdownProps {
-    value: string;
-    onChange: (val: string) => void;
-}
-
 export default function GenderDropdown({ value, onChange }: GenderDropdownProps) {
     const [visible, setVisible] = useState(false);
 
-    function handleSelect(val: string) {
-        onChange(val);
+    function handleSelect(value: GENDER_OPTIONS) {
+        onChange(value);
         setVisible(false);
     }
 
@@ -27,7 +28,7 @@ export default function GenderDropdown({ value, onChange }: GenderDropdownProps)
             {/* Dropdown field */}
             <Pressable style={styles.field} onPress={() => setVisible(true)}>
                 <Text style={[styles.text, !value && { color: COLORS.textPrimary }]}>
-                    {value ? OPTIONS.find(o => o.value === value)?.label : "Select gender"}
+                    {value ? GENDER_OPTIONS_DROPDOWN.find(o => o.value === value)?.label : "Select gender"}
                 </Text>
 
                 <Ionicons name="chevron-down" size={20} color={COLORS.textPrimary} />
@@ -39,7 +40,7 @@ export default function GenderDropdown({ value, onChange }: GenderDropdownProps)
                     <View style={styles.modal}>
                         <Text style={styles.title}>Select Gender</Text>
                         <FlatList
-                            data={OPTIONS}
+                            data={GENDER_OPTIONS_DROPDOWN}
                             keyExtractor={(item) => item.value}
                             renderItem={({ item }) => (
                                 <Pressable
